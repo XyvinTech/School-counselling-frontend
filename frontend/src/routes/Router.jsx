@@ -28,9 +28,23 @@ import CounselorEvent from "../pages/Counselor/Event/CounselorEvent";
 import CounselorSettings from "../pages/Counselor/CounselorSettings";
 import UpcomingSessionSinglePge from "../pages/Counselor/UpcomingSession/UpcomingSessionSinglePge";
 import AddAvailability from "../pages/Counselor/AddAvailability/AddAvailability";
+import LoginPage from "../pages/Login/Loginpage";
+import RaiseIssuePage from "../pages/Login/RaiseIssue";
 const router = createBrowserRouter([
   {
     path: "/",
+    element: (
+     <LoginPage />
+    ),
+  },
+  {
+    path: "/raiseissue",
+    element: (
+     <RaiseIssuePage />
+    ),
+  },
+  {
+    path: "/dashboard",
     element: (
       <AdminLayout>
         <DashboardPage />
@@ -245,6 +259,7 @@ const router = createBrowserRouter([
       </CounselorLayout>
     ),
   },
+  
 ]);
 
 export default router;

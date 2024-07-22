@@ -212,7 +212,7 @@ const StyledTable = ({
                 ))}
 
                 <StyledTableCell padding="normal">
-                  {" "}
+                <Box display="flex" alignItems="center">
                   <IconButton
                     aria-controls="simple-view"
                     aria-haspopup="true"
@@ -235,7 +235,7 @@ const StyledTable = ({
                   >
                     <MenuItem onClick={handleView}>View</MenuItem>
                     <MenuItem onClick={handleDelete}>Delete</MenuItem>
-                  </Menu>
+                  </Menu></Box>
                 </StyledTableCell>
               </StyledTableRow>
             ))}

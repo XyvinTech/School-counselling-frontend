@@ -29,7 +29,7 @@ const SessionSinglePage = () => {
         </Typography>
       </Box>
       <Grid container spacing={6} padding={4}>
-        <Grid item md={4}>
+        <Grid item md={5}>
           <Stack marginBottom={4}> <Box marginBottom={4}>
             <Typography variant="h6" fontWeight="900" color={"#828282"}>
               Student

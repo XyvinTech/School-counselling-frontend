@@ -51,7 +51,7 @@ const StudentSinglePage = () => {
         </Typography>
       </Box>{" "}
       <Grid container spacing={4} padding={4}>
-        <Grid item md={4} spacing={2}>
+        <Grid item md={5} spacing={2}>
           <UserCard user={data} />
         </Grid>
         <Grid item md={4} spacing={2}>

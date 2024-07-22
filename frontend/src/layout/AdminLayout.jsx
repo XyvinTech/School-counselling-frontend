@@ -16,6 +16,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -37,23 +38,31 @@ import { ReactComponent as UserIcon } from "../assets/icons/UserIcon.svg";
 import { ReactComponent as StudentIcon } from "../assets/icons/StudentIcon.svg";
 import { ReactComponent as TeacherIcon } from "../assets/icons/TeacherIcon.svg";
 import { ReactComponent as LogoutIcon } from "../assets/icons/LogoutIcon.svg";
+import GridViewIcon from '@mui/icons-material/GridView';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import InsertInvitationOutlinedIcon from '@mui/icons-material/InsertInvitationOutlined';
+import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 const drawerWidth = 300;
 const subNavigation = [
-  { name: "Dashboard", to: "/", icon: <DashboardIcon /> },
+  { name: "Dashboard", to: "/dashboard", icon: <GridViewIcon /> },
   {
     name: "User Management",
-    icon: <UserIcon />,
+    icon: <PeopleAltOutlinedIcon />,
     subItems: [
-      { name: "Student", to: "/user/student", icon: <StudentIcon /> },
-      { name: "Counselor", to: "/user/counselor", icon: <TeacherIcon /> },
+      { name: "Student", to: "/user/student", icon: <AccountCircleOutlinedIcon /> },
+      { name: "Counselor", to: "/user/counselor", icon: <SchoolOutlinedIcon /> },
     ],
   },
-  { name: "Cases & Sessions", to: "/casesstudies", icon: <TeacherIcon /> },
-  { name: "Events", to: "/events", icon: <EventIcon /> },
+  { name: "Cases & Sessions", to: "/casesstudies", icon: <SchoolOutlinedIcon/> },
+  { name: "Events", to: "/events", icon: <InsertInvitationOutlinedIcon /> },
 
-  { name: "Report", to: "/report", icon: <ReportIcon /> },
-  { name: "Notification", to: "/notification", icon: <NotificationIcon /> },
-  { name: "Settings", to: "/settings", icon: <SettingsIcon /> },
+  { name: "Report", to: "/report", icon: <NewspaperOutlinedIcon /> },
+  { name: "Notification", to: "/notification", icon: <NotificationsNoneOutlinedIcon /> },
+  { name: "Settings", to: "/settings", icon: <SettingsOutlinedIcon /> },
 ];
 const SimpleDialog = ({ open, onClose }) => {
   const navigate = useNavigate();
@@ -154,9 +163,10 @@ const AdminLayout = (props) => {
                         ? "#F2F2F2"
                         : "transparent",
                     "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
+                    "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
+                  <ListItemIcon sx={{ minWidth: 24, marginRight: 1 , }}>
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText
@@ -194,9 +204,10 @@ const AdminLayout = (props) => {
                             color: "#0072BC",
                             backgroundColor: "#ECF6FC",
                           },
+                          "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                         }}
                       >
-                        <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
+                        <ListItemIcon sx={{ minWidth: 24, marginRight: 1 ,color: location.pathname === subItem.to ? "#0072BC" : "#686465"}}>
                           {subItem.icon}
                         </ListItemIcon>
                         <ListItemText
@@ -227,9 +238,10 @@ const AdminLayout = (props) => {
                   backgroundColor:
                     location.pathname === item.to ? "#ECF6FC" : "transparent",
                   "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
+                  "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
+                <ListItemIcon sx={{ minWidth: 24, marginRight: 1,color: location.pathname === item.to ? "#0072BC" : "#686465" }}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
@@ -262,10 +274,11 @@ const AdminLayout = (props) => {
               marginRight: "10px",
               color: "#5F6368",
               "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
+              "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
             }}
           >
-            <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
-              <LogoutIcon />
+            <ListItemIcon sx={{ minWidth: 24, marginRight: 1, }}>
+              <LogoutOutlinedIcon />
             </ListItemIcon>
             <ListItemText
               primary="Logout"

@@ -35,18 +35,25 @@ import { ReactComponent as NotificationIcon } from "../assets/icons/Notification
 import { ReactComponent as SettingsIcon } from "../assets/icons/SettingsIcon.svg";
 import { ReactComponent as TeacherIcon } from "../assets/icons/TeacherIcon.svg";
 import { ReactComponent as LogoutIcon } from "../assets/icons/LogoutIcon.svg";
+
+import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
+import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined';
 const drawerWidth = 300;
 const subNavigation = [
   {
     name: "Book Apponment",
     to: "/student/bookappoinment",
-    icon: <BookingIcon />,
+    icon: <EventAvailableOutlinedIcon />,
   },
 
-  { name: "Session", to: "/student/session", icon: <EventIcon /> },
-  { name: "Reports", to: "/student/reports", icon: <ReportIcon /> },
-  { name: "Events", to: "/student/events", icon: <TeacherIcon /> },
-  { name: "Settings", to: "/student/settings", icon: <SettingsIcon /> },
+  { name: "Session", to: "/student/session", icon: <EventOutlinedIcon /> },
+  { name: "Reports", to: "/student/reports", icon: <NewspaperOutlinedIcon /> },
+  { name: "Events", to: "/student/events", icon: <SchoolOutlinedIcon /> },
+  { name: "Settings", to: "/student/settings", icon: <SettingsOutlinedIcon /> },
 ];
 const SimpleDialog = ({ open, onClose }) => {
   const navigate = useNavigate();
@@ -147,9 +154,10 @@ const StudentLayout = (props) => {
                         ? "#F2F2F2"
                         : "transparent",
                     "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
+                    "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
+                  <ListItemIcon sx={{ minWidth: 24, marginRight: 1 ,color:location.pathname === item.to ? "#0072BC" : "#686465"}}>
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText
@@ -187,9 +195,10 @@ const StudentLayout = (props) => {
                             color: "#0072BC",
                             backgroundColor: "#ECF6FC",
                           },
+                          "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                         }}
                       >
-                        <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
+                        <ListItemIcon sx={{ minWidth: 24, marginRight: 1,color:location.pathname === item.to ? "#0072BC" : "#686465" }}>
                           {subItem.icon}
                         </ListItemIcon>
                         <ListItemText
@@ -220,9 +229,10 @@ const StudentLayout = (props) => {
                   backgroundColor:
                     location.pathname === item.to ? "#ECF6FC" : "transparent",
                   "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
+                  "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
+                <ListItemIcon sx={{ minWidth: 24, marginRight: 1 ,color:location.pathname === item.to ? "#0072BC" : "#686465"}}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
@@ -255,10 +265,11 @@ const StudentLayout = (props) => {
               marginRight: "10px",
               color: "#5F6368",
               "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
+              "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
             }}
           >
             <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
-              <LogoutIcon />
+              <LogoutOutlinedIcon />
             </ListItemIcon>
             <ListItemText
               primary="Logout"

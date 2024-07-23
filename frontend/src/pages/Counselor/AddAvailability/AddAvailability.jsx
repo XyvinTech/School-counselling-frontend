@@ -1,5 +1,14 @@
-import { Box, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  Checkbox,
+  IconButton,
+  TextField,
+  Grid,
+  Button,
+} from "@mui/material";
+import AddTime from "../../../components/AddTime";
 
 const AddAvailability = () => {
   return (
@@ -9,10 +18,17 @@ const AddAvailability = () => {
           Availability
         </Typography>
       </Box>
-      <Box padding="30px" marginBottom={4}>
+      <Box padding="30px"paddingBottom={2} >
         <Typography variant="h4" color={"#4A4647"}>
           Weekly hours
-        </Typography>{" "}
+        </Typography>
+      </Box>{" "}
+      <Box padding="30px" paddingTop={0} marginBottom={4}>
+        <Grid container >
+          <Grid item md={6} >
+            <AddTime />
+          </Grid>
+        </Grid>{" "}
       </Box>
     </>
   );

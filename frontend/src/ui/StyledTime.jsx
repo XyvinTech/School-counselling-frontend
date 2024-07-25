@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { format } from "date-fns";
 
 const theme = createTheme({
   components: {
@@ -58,17 +59,26 @@ const CustomTextField = styled(TextField)({
 });
 
 export const StyledTime = ({ label, placeholder, onChange, value }) => {
+  const handleChange = (newValue) => {
+    if (newValue) {
+      onChange(format(newValue, "HH:mm"));
+    } else {
+      onChange("");
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <TimePicker
           label={label}
-          value={value}
-          onChange={onChange}
+          value={value ? new Date(`1970-01-01T${value}:00`) : null}
+          onChange={handleChange}
           renderInput={(params) => (
             <CustomTextField {...params} placeholder={placeholder} />
           )}
-          sx={{ width: "100%" }}
+          ampm={false} // Display time in 24-hour format
+          views={['hours', 'minutes']} // Only show hours and minutes
         />
       </LocalizationProvider>
     </ThemeProvider>

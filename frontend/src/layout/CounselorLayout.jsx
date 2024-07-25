@@ -35,13 +35,14 @@ import { ReactComponent as NotificationIcon } from "../assets/icons/Notification
 import { ReactComponent as SettingsIcon } from "../assets/icons/SettingsIcon.svg";
 import { ReactComponent as TeacherIcon } from "../assets/icons/TeacherIcon.svg";
 import { ReactComponent as LogoutIcon } from "../assets/icons/LogoutIcon.svg";
-import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined';
-import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
-const drawerWidth = 300;
+import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
+import NewspaperOutlinedIcon from "@mui/icons-material/NewspaperOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import DateRangeOutlinedIcon from "@mui/icons-material/DateRangeOutlined";
+import { useAuthStore } from "../store/counselor/AuthStore";
+const drawerWidth = 250;
 const subNavigation = [
   {
     name: "Upcomming Sessions",
@@ -53,13 +54,25 @@ const subNavigation = [
     to: "/counselor/addavailability",
     icon: <EventAvailableOutlinedIcon />,
   },
-  { name: "Sessions", to: "/counselor/session", icon: <EventAvailableOutlinedIcon /> },
+  {
+    name: "Sessions",
+    to: "/counselor/session",
+    icon: <EventAvailableOutlinedIcon />,
+  },
   { name: "Reports", to: "/counselor/report", icon: <NewspaperOutlinedIcon /> },
   { name: "Events", to: "/counselor/event", icon: <SchoolOutlinedIcon /> },
-  { name: "Settings", to: "/counselor/setting", icon: <SettingsOutlinedIcon /> },
+  {
+    name: "Settings",
+    to: "/counselor/setting",
+    icon: <SettingsOutlinedIcon />,
+  },
 ];
 const SimpleDialog = ({ open, onClose }) => {
-  const navigate = useNavigate();
+  const { counselor, getCounselor, isChange } = useAuthStore();
+  useEffect(() => {
+    getCounselor();
+  }, [isChange]);
+  
   return (
     <Dialog
       open={open}
@@ -85,10 +98,10 @@ const SimpleDialog = ({ open, onClose }) => {
           />
           <Box>
             <Typography variant="h6" color="#292D32" paddingBottom={1}>
-              Alex meian
+            {counselor?.name}
             </Typography>
             <Typography variant="h7" color="rgba(41, 45, 50, 0.44)">
-              Admin
+            {counselor?.usertype}
             </Typography>
           </Box>
         </Stack>
@@ -99,11 +112,13 @@ const SimpleDialog = ({ open, onClose }) => {
 
 const CounselorLayout = (props) => {
   const { window, children } = props;
+  const { counselor ,logoutAuth} = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
+  const navigate = useNavigate();
   const handleDrawerClose = () => {
     setIsClosing(true);
     setMobileOpen(false);
@@ -112,7 +127,9 @@ const CounselorLayout = (props) => {
   const handleDrawerTransitionEnd = () => {
     setIsClosing(false);
   };
-
+  const handleLogout = () => {
+    logoutAuth(navigate);
+  };
   const handleDrawerToggle = () => {
     if (!isClosing) {
       setMobileOpen(!mobileOpen);
@@ -132,7 +149,7 @@ const CounselorLayout = (props) => {
   };
   const drawer = (
     <div style={{ position: "relative", height: "100%" }}>
-      <Toolbar sx={{ height: "88px" }}>
+      <Toolbar sx={{ height: "130px"}}>
         <Box sx={{ display: "flex", alignItems: "center", padding: "15px" }}>
           <img src="/vite.svg" alt="Vite Logo" width={"48px"} height="28px" />
           <Typography variant="h1" color={"#686465"} sx={{ ml: 1 }}>
@@ -141,84 +158,11 @@ const CounselorLayout = (props) => {
         </Box>
       </Toolbar>
       <Divider />
-      <List style={{ paddingBottom: "72px" }}>
+      <List >
         {subNavigation.map((item) =>
-          item.name === "User Management" ? (
-            <div key={item.name}>
-              <ListItem sx={{ paddingBottom: "8px" }} disablePadding>
-                <ListItemButton
-                  onClick={handleClick}
-                  sx={{
-                    marginLeft: "20px",
-                    marginRight: "10px",
-                    color: "#5F6368",
-                    backgroundColor:
-                      open && location.pathname.startsWith("/user")
-                        ? "#F2F2F2"
-                        : "transparent",
-                    "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
-                    "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 24, marginRight: 1, color:location.pathname === item.to ? "#0072BC" : "#686465" }}>
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.name}
-                    primaryTypographyProps={{
-                      variant: "h6",
-                    }}
-                  />
-                  {open ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-              </ListItem>
-              <Collapse in={open}>
-                <List component="div">
-                  {item.subItems.map((subItem) => (
-                    <ListItem
-                      key={subItem.name}
-                      sx={{ paddingBottom: "8px" }}
-                      disablePadding
-                    >
-                      <ListItemButton
-                        component={Link}
-                        to={subItem.to}
-                        sx={{
-                          marginLeft: "40px",
-                          marginRight: "40px",
-                          color:
-                            location.pathname === subItem.to
-                              ? "#0072BC"
-                              : "#5F6368",
-                          backgroundColor:
-                            location.pathname === subItem.to
-                              ? "#ECF6FC"
-                              : "transparent",
-                          "&:hover": {
-                            color: "#0072BC",
-                            backgroundColor: "#ECF6FC",
-                          },
-                          "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
-                        }}
-                      >
-                        <ListItemIcon sx={{ minWidth: 24, marginRight: 1 , color:location.pathname === item.to ? "#0072BC" : "#686465"}}>
-                          {subItem.icon}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={subItem.name}
-                          primaryTypographyProps={{
-                            variant: "h6",
-                          }}
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-              </Collapse>
-            </div>
-          ) : (
+        
             <ListItem
-              sx={{ paddingBottom: "20px" }}
+              sx={{ paddingBottom: "10px" }}
               key={item.name}
               disablePadding
             >
@@ -235,7 +179,14 @@ const CounselorLayout = (props) => {
                   "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 24, marginRight: 1, color:location.pathname === item.to ? "#0072BC" : "#686465" }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 24,
+                    marginRight: 1,
+                    color:
+                      location.pathname === item.to ? "#0072BC" : "#686465",
+                  }}
+                >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
@@ -244,7 +195,7 @@ const CounselorLayout = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-          )
+          
         )}
       </List>
       <List
@@ -258,9 +209,7 @@ const CounselorLayout = (props) => {
         <ListItem
           sx={{ paddingBottom: "20px" }}
           disablePadding
-          onClick={() => {
-            console.log("Logging out...");
-          }}
+        
         >
           <ListItemButton
             sx={{
@@ -269,7 +218,7 @@ const CounselorLayout = (props) => {
               color: "#5F6368",
               "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
               "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
-            }}
+            }}onClick={handleLogout}
           >
             <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
               <LogoutOutlinedIcon />
@@ -303,7 +252,7 @@ const CounselorLayout = (props) => {
           sx={{
             height: "88px",
             justifyContent: "space-between",
-            paddingRight: "20px",
+            paddingRight: "20px", 
           }}
         >
           <Box
@@ -349,14 +298,14 @@ const CounselorLayout = (props) => {
                 />
                 <Box sx={{ marginLeft: "10px" }}>
                   <Typography variant="h6" color={"#292D32"} display="block">
-                    Alex Meian
+                  {counselor?.name}
                   </Typography>
                   <Typography
                     variant="h7"
                     color={"rgba(41, 45, 50, 0.44)"}
                     display="block"
                   >
-                    Admin
+                     {counselor?.usertype}
                   </Typography>
                 </Box>
               </Box>
@@ -406,11 +355,11 @@ const CounselorLayout = (props) => {
           {drawer}
         </Drawer>
       </Box>
-      <Box
+      <Box 
         component="main"
         sx={{
           flexGrow: 1,
-
+// paddingBottom: '100vh',
           backgroundColor: "#F3F3F3",
           paddingTop: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },

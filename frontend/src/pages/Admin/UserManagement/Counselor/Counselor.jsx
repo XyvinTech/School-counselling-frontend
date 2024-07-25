@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Tabs, Tab, Stack, Grid } from "@mui/material";
 import StyledTable from "../../../../ui/StyledTable";
-import { userColumns, userData } from "../../../../assets/json/TableData";
 import { useNavigate } from "react-router-dom";
 import AddCounselor from "../../../../components/AddCounselor";
 import { ReactComponent as FilterIcon } from "../../../../assets/icons/FilterIcon.svg";
 import StyledSearchbar from "../../../../ui/StyledSearchbar";
 import AddBulk from "../../../../components/AddBulk";
+import { useListStore } from "../../../../store/listStore";
 export const Counselor = () => {
   const navigate = useNavigate();
+  const { lists, fetchLists } = useListStore();
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -33,7 +34,20 @@ export const Counselor = () => {
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
+  const userColumns = [
+    { title: "Name", field: "name" },
+    { title: "Email", field: "email" },
+    { title: "Contact Info", field: "mobile" },
+    { title: "Designation", field: "designation" },
+    { title: "Experience Level", field: "location" },
+    { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "counsellers" };
 
+    fetchLists(filter);
+  }, [fetchLists]);
+  console.log(lists);
   return (
     <>
       <Tabs
@@ -97,7 +111,6 @@ export const Counselor = () => {
             </Stack>
             <StyledTable
               columns={userColumns}
-              data={userData}
               onSelectionChange={handleSelectionChange}
               onView={handleView}
             />{" "}

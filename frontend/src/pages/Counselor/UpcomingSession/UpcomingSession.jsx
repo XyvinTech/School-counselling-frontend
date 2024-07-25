@@ -48,8 +48,8 @@ const UpcomingSession = () => {
         <>
           <Stack
             direction={"row"}
-            justifyContent={"space-between"}paddingBottom={3}
-            
+            justifyContent={"space-between"}
+            paddingBottom={3}
             alignItems={"center"}
           >
             {" "}
@@ -85,7 +85,7 @@ const UpcomingSession = () => {
                 style={{ cursor: "pointer" }}
               >
                 {" "}
-                {calendarOpen ?<DashboardIcon /> : <CalendarIcon /> }
+                {calendarOpen ? <DashboardIcon /> : <CalendarIcon />}
               </Box>
             </Stack>
           </Stack>

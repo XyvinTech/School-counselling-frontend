@@ -30,18 +30,22 @@ import UpcomingSessionSinglePge from "../pages/Counselor/UpcomingSession/Upcomin
 import AddAvailability from "../pages/Counselor/AddAvailability/AddAvailability";
 import LoginPage from "../pages/Login/Loginpage";
 import RaiseIssuePage from "../pages/Login/RaiseIssue";
+import CounsellorLoginPage from "../pages/Login/CounsellorLoginPage";
+import StudentLoginPage from "../pages/Login/StudentLoginPage";
+import RescheduleSession from "../pages/Student/Session/RescheduleSession";
+import CaseSession from "../pages/Student/Session/CaseSession";
+import SessionReport from "../pages/Student/Session/SessionReport";
+import AddEntry from "../components/AddEntry";
+import CasesSessionPage from "../pages/Counselor/Session/CasesSessionPage";
+import SessionDetails from "../pages/Counselor/Session/SessionDetails";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-     <LoginPage />
-    ),
+    element: <LoginPage />,
   },
   {
     path: "/raiseissue",
-    element: (
-     <RaiseIssuePage />
-    ),
+    element: <RaiseIssuePage />,
   },
   {
     path: "/dashboard",
@@ -153,7 +157,10 @@ const router = createBrowserRouter([
   },
 
   // Student Module Routing
-
+  {
+    path: "/student",
+    element: <StudentLoginPage />,
+  },
   {
     path: "/student/bookappoinment",
     element: (
@@ -167,6 +174,30 @@ const router = createBrowserRouter([
     element: (
       <StudentLayout>
         <StudentSession />
+      </StudentLayout>
+    ),
+  },
+  {
+    path: "/student/session/case/:id",
+    element: (
+      <StudentLayout>
+        <CaseSession />
+      </StudentLayout>
+    ),
+  },
+  {
+    path: "/student/session/report/:id",
+    element: (
+      <StudentLayout>
+        <SessionReport />
+      </StudentLayout>
+    ),
+  },
+  {
+    path: "/student/session/reschedule/:id",
+    element: (
+      <StudentLayout>
+        <RescheduleSession />
       </StudentLayout>
     ),
   },
@@ -196,6 +227,10 @@ const router = createBrowserRouter([
   },
   // counselor Module Routing
   {
+    path: "/counselor",
+    element: <CounsellorLoginPage />,
+  },
+  {
     path: "/counselor/upcomminSession",
     element: (
       <CounselorLayout>
@@ -224,6 +259,31 @@ const router = createBrowserRouter([
     element: (
       <CounselorLayout>
         <CounselorSession />
+      </CounselorLayout>
+    ),
+  },
+
+  {
+    path: "/counselor/session/addentry",
+    element: (
+      <CounselorLayout>
+        <AddEntry />
+      </CounselorLayout>
+    ),
+  },
+  {
+    path: "/counselor/session/case/:id",
+    element: (
+      <CounselorLayout>
+        <CasesSessionPage />
+      </CounselorLayout>
+    ),
+  },
+  {
+    path: "/counselor/session/report/:id",
+    element: (
+      <CounselorLayout>
+        <SessionDetails />
       </CounselorLayout>
     ),
   },
@@ -259,7 +319,6 @@ const router = createBrowserRouter([
       </CounselorLayout>
     ),
   },
-  
 ]);
 
 export default router;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, Stack } from "@mui/material";
 import { StyledTime } from "../../../ui/StyledTime";
 import StyledSelectField from "../../../ui/StyledSelectField";
@@ -8,6 +8,9 @@ import { StyledMultilineTextField } from "../../../ui/StyledMultilineTextField "
 import StyledSwitch from "/src/ui/StyledSwitch.jsx";
 import { StyledCalender } from "../../../ui/StyledCalender";
 import { Controller, useForm } from "react-hook-form";
+import { useLocation, useParams } from "react-router-dom";
+import { useTimeStore } from "../../../store/counselor/TimeStore";
+import { useSessionStore } from "../../../store/counselor/SessionStore";
 export default function RescheduleSession() {
   const {
     control,
@@ -15,6 +18,12 @@ export default function RescheduleSession() {
     reset,
     formState: { errors },
   } = useForm();
+  const { id } = useParams();
+  const location = useLocation();
+  const { rowData } = location.state || {};
+  const { slots, fetchSlot } = useTimeStore();
+  const { updateSession } = useSessionStore();
+  const [day, setDay] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
 
   const handleSwitchChange = (e) => {
@@ -25,65 +34,108 @@ export default function RescheduleSession() {
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" },
   ];
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
+  const handleDateChange = (formattedDate, dayOfWeek) => {
+    setDay(dayOfWeek);
   };
+  useEffect(() => {
+    if (rowData.counsellor != null && day != null) {
+      let filter = {
+        day: day,
+      };
+      fetchSlot(rowData.counsellor, filter);
+    }
+  }, [rowData.counsellor, day, fetchSlot]);
+  const timeOptions =
+    slots?.times?.map((time) => ({
+      value: time,
+      label: time,
+    })) || [];
+  const onSubmit = async (data) => {
+    const formData = {
+      session_date: data?.session_date,
+      session_time: data?.session_time.value + ":00",
+    };
+    await updateSession(id,formData);
+  };
+  // console.log("Form data:", rowData.counsellor);
   return (
-    <Box sx={{ padding: 3 }} bgcolor={"white"} borderRadius={"4px"}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={4}>
-          <Grid item xs={12}>
-            <Typography
-              sx={{ marginBottom: 1 }}
-              variant="h6"
-              fontWeight={500}
-              color={"#333333"}
-            >
-              Date
-            </Typography>
-            <Controller
-              name="date"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Date is required" }}
-              render={({ field }) => (
-                <>
-                  <StyledCalender
-                    label="Select Date from Calender"
-                    {...field}
-                  />
-                  {errors.date && (
-                    <span style={{ color: "red" }}>{errors.date.message}</span>
-                  )}{" "}
-                </>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Typography
-              sx={{ marginBottom: 1 }}
-              variant="h6"
-              fontWeight={500}
-              color={"#333333"}
-            >
-              Time
-            </Typography>
-            <Controller
-              name="time"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Time is required" }}
-              render={({ field }) => (
-                <>
-                  <StyledTime label="Select Time" {...field} />
-                  {errors.time && (
-                    <span style={{ color: "red" }}>{errors.time.message}</span>
-                  )}{" "}
-                </>
-              )}
-            />
-          </Grid>{" "}
-          <Grid item xs={12}>
+    <>
+      <Box padding="30px">
+        <Typography variant="h4" color={"#4A4647"} sx={{ marginBottom: 4 }}>
+          Upcoming Sessions / Reschedule ‘Personal Story’
+        </Typography>
+      </Box>
+      <Box paddingTop="0px" paddingLeft={"30px"} marginBottom={4}>
+        {" "}
+        <Box
+          bgcolor={"white"}
+          padding={3}
+          width={"804px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{ marginBottom: 1 }}
+                  variant="h6"
+                  fontWeight={500}
+                  color={"#333333"}
+                >
+                  Date
+                </Typography>
+                <Controller
+                  name="session_date"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: "Date is required" }}
+                  render={({ field }) => (
+                    <>
+                      <StyledCalender
+                        label="Select Date from Calender"
+                        {...field}
+                        onChange={(formattedDate, dayOfWeek) => {
+                          field.onChange(formattedDate);
+                          handleDateChange(formattedDate, dayOfWeek);
+                        }}
+                      />
+                      {errors.session_date && (
+                        <span style={{ color: "red" }}>
+                          {errors.session_date.message}
+                        </span>
+                      )}
+                    </>
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{ marginBottom: 1 }}
+                  variant="h6"
+                  fontWeight={500}
+                  color={"#333333"}
+                >
+                  Time
+                </Typography>
+                <Controller
+                  name="session_time"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: "Time is required" }}
+                  render={({ field }) => (
+                    <>
+                      <StyledSelectField options={timeOptions} {...field} />
+                      {errors.session_time && (
+                        <span style={{ color: "red" }}>
+                          {errors.session_time.message}
+                        </span>
+                      )}
+                    </>
+                  )}
+                />
+              </Grid>{" "}
+              {/* <Grid item xs={12}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -108,8 +160,8 @@ export default function RescheduleSession() {
                 </>
               )}
             />
-          </Grid>
-          <Grid item xs={12}>
+          </Grid> */}
+              {/* <Grid item xs={12}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -198,29 +250,31 @@ export default function RescheduleSession() {
                 )}
               />
             </Stack>
-          </Grid>
-          <Grid item xs={6}></Grid> <Grid item xs={6}></Grid>
-          <Grid item xs={6}>
-            {" "}
-            <Stack direction={"row"} spacing={2}>
-              <StyledButton
-                name="Cancel"
-                variant="secondary"
-                style={{ width: "auto" }}
-              >
-                Cancel
-              </StyledButton>
-              <StyledButton
-                name="Save"
-                variant="primary"
-                style={{ width: "auto" }}
-              >
-                Save
-              </StyledButton>
-            </Stack>
-          </Grid>
-        </Grid>
-      </form>
-    </Box>
+          </Grid> */}
+              <Grid item xs={6}></Grid> <Grid item xs={6}></Grid>
+              <Grid item xs={6}>
+                {" "}
+                <Stack direction={"row"} spacing={2}>
+                  <StyledButton
+                    name="Cancel"
+                    variant="secondary"
+                    style={{ width: "auto" }}
+                  >
+                    Cancel
+                  </StyledButton>
+                  <StyledButton
+                    name="Save"
+                    variant="primary"
+                    style={{ width: "auto" }}
+                  >
+                    Save
+                  </StyledButton>
+                </Stack>
+              </Grid>
+            </Grid>
+          </form>
+        </Box>{" "}
+      </Box>{" "}
+    </>
   );
 }

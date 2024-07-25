@@ -29,15 +29,7 @@ import {
 } from "@mui/material";
 import profile from "../assets/images/profile.png";
 import { ReactComponent as ExpandMoreIcon } from "../assets/icons/ExpandMoreIcon.svg";
-import { ReactComponent as DashboardIcon } from "../assets/icons/DashboardIcon.svg";
-import { ReactComponent as EventIcon } from "../assets/icons/EventIcon.svg";
-import { ReactComponent as ReportIcon } from "../assets/icons/ReportIcon.svg";
 import { ReactComponent as NotificationIcon } from "../assets/icons/NotificationIcon.svg";
-import { ReactComponent as SettingsIcon } from "../assets/icons/SettingsIcon.svg";
-import { ReactComponent as UserIcon } from "../assets/icons/UserIcon.svg";
-import { ReactComponent as StudentIcon } from "../assets/icons/StudentIcon.svg";
-import { ReactComponent as TeacherIcon } from "../assets/icons/TeacherIcon.svg";
-import { ReactComponent as LogoutIcon } from "../assets/icons/LogoutIcon.svg";
 import GridViewIcon from '@mui/icons-material/GridView';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
@@ -46,7 +38,8 @@ import InsertInvitationOutlinedIcon from '@mui/icons-material/InsertInvitationOu
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-const drawerWidth = 300;
+import { useAdminStore } from "../store/admin/AdminStore";
+const drawerWidth = 250;
 const subNavigation = [
   { name: "Dashboard", to: "/dashboard", icon: <GridViewIcon /> },
   {
@@ -65,7 +58,11 @@ const subNavigation = [
   { name: "Settings", to: "/settings", icon: <SettingsOutlinedIcon /> },
 ];
 const SimpleDialog = ({ open, onClose }) => {
-  const navigate = useNavigate();
+  const { admin, getAdmin, isChange } = useAdminStore();
+
+  useEffect(() => {
+    getAdmin();
+  }, [isChange]);
   return (
     <Dialog
       open={open}
@@ -91,7 +88,7 @@ const SimpleDialog = ({ open, onClose }) => {
           />
           <Box>
             <Typography variant="h6" color="#292D32" paddingBottom={1}>
-              Alex meian
+            {admin?.name}
             </Typography>
             <Typography variant="h7" color="rgba(41, 45, 50, 0.44)">
               Admin
@@ -105,9 +102,11 @@ const SimpleDialog = ({ open, onClose }) => {
 
 const AdminLayout = (props) => {
   const { window, children } = props;
+  const { admin ,logoutAuth} = useAdminStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const theme = useTheme();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
   const handleDrawerClose = () => {
@@ -135,6 +134,9 @@ const AdminLayout = (props) => {
 
   const handleDialogClose = () => {
     setDialogOpen(false);
+  };
+  const handleLogout = () => {
+    logoutAuth(navigate);
   };
   const drawer = (
     <div style={{ position: "relative", height: "100%" }}>
@@ -264,9 +266,7 @@ const AdminLayout = (props) => {
         <ListItem
           sx={{ paddingBottom: "20px" }}
           disablePadding
-          onClick={() => {
-            console.log("Logging out...");
-          }}
+         
         >
           <ListItemButton
             sx={{
@@ -275,7 +275,7 @@ const AdminLayout = (props) => {
               color: "#5F6368",
               "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
               "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
-            }}
+            }}onClick={handleLogout}
           >
             <ListItemIcon sx={{ minWidth: 24, marginRight: 1, }}>
               <LogoutOutlinedIcon />
@@ -355,7 +355,7 @@ const AdminLayout = (props) => {
                 />
                 <Box sx={{ marginLeft: "10px" }}>
                   <Typography variant="h6" color={"#292D32"} display="block">
-                    Alex Meian
+                  {admin?.name}
                   </Typography>
                   <Typography
                     variant="h7"

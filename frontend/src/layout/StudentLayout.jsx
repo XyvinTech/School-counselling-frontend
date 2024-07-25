@@ -42,7 +42,8 @@ import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined';
-const drawerWidth = 300;
+import { useAuthStore } from "../store/student/authStore";
+const drawerWidth = 250;
 const subNavigation = [
   {
     name: "Book Apponment",
@@ -96,8 +97,10 @@ const SimpleDialog = ({ open, onClose }) => {
 
 const StudentLayout = (props) => {
   const { window, children } = props;
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const { counselor ,logoutAuth} = useAuthStore();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
@@ -109,7 +112,9 @@ const StudentLayout = (props) => {
   const handleDrawerTransitionEnd = () => {
     setIsClosing(false);
   };
-
+  const handleLogout = () => {
+    logoutAuth(navigate);
+  };
   const handleDrawerToggle = () => {
     if (!isClosing) {
       setMobileOpen(!mobileOpen);
@@ -255,9 +260,7 @@ const StudentLayout = (props) => {
         <ListItem
           sx={{ paddingBottom: "20px" }}
           disablePadding
-          onClick={() => {
-            console.log("Logging out...");
-          }}
+         
         >
           <ListItemButton
             sx={{
@@ -266,7 +269,7 @@ const StudentLayout = (props) => {
               color: "#5F6368",
               "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
               "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
-            }}
+            }}onClick={handleLogout}
           >
             <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
               <LogoutOutlinedIcon />

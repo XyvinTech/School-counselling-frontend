@@ -1,17 +1,15 @@
 import { Box, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
-import {
-  upcomingColumns,
-  upcomingData,
-} from "../../../assets/json/UpcomingSessionData";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import StyledTable from "../../../ui/StyledTable";
 import { useNavigate } from "react-router-dom";
 import SessionHistory from "./SessionHistory";
 import RescheduleSession from "./RescheduleSession";
+import { useListStore } from "../../../store/listStore";
 const StudentSession = () => {
   const navigate = useNavigate();
+  const { lists, userSession } = useListStore();
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -31,17 +29,29 @@ const StudentSession = () => {
 
   const handleView = (id) => {
     console.log("View item:", id);
-    setViewingId(id);
+    navigate(`/student/session/case/${id}`);
   };
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
+  const userColumns = [
+    { title: "Case ID", field: "id" },
+    { title: "Councellor Name", field: "counsellor_name" },
+    { title: "Type of Counselling", field: "type" },
+    { title: "Created on", field: "createdAt" },
+    { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "cases" };
+
+    userSession(filter);
+  }, [userSession]);
+  // console.log(lists);
   return (
     <>
       <Tabs
         value={selectedTab}
-        
         onChange={handleChange}
         aria-label="tabs"
         TabIndicatorProps={{
@@ -66,7 +76,7 @@ const StudentSession = () => {
           },
         }}
       >
-        <Tab label="Upcoming Sessions" />
+        <Tab label="Cases" />
         <Tab label="Session History" />
       </Tabs>{" "}
       <Box padding="30px" marginBottom={4}>
@@ -80,7 +90,7 @@ const StudentSession = () => {
             >
               {" "}
               <Typography variant="h4" color={"#4A4647"}>
-                Upcoming Sessions
+                Cases
               </Typography>
               <Stack direction={"row"} spacing={2}>
                 <StyledSearchbar />
@@ -101,22 +111,16 @@ const StudentSession = () => {
               </Stack>
             </Stack>
             <StyledTable
-              columns={upcomingColumns}
-              data={upcomingData}
+              columns={userColumns}
               onSelectionChange={handleSelectionChange}
               onView={handleView}
             />
           </>
         )}{" "}
-        {selectedTab === 0 && viewingId && (
+        {selectedTab === 0 && (
           <>
-            <Typography variant="h4" color={"#4A4647"} sx={{ marginBottom: 4 }}>
-              Upcoming Sessions / Reschedule ‘Personal Story’
-            </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <RescheduleSession />{" "}
-              </Grid>{" "}
+              <Grid item xs={6}></Grid>{" "}
             </Grid>
           </>
         )}

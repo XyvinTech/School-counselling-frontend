@@ -7,6 +7,7 @@ import { StyledMultilineTextField } from "../ui/StyledMultilineTextField ";
 import StyledSwitch from "../ui/StyledSwitch";
 import { StyledButton } from "../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
+import { useCounselorStore } from "../store/admin/CounselorStore";
 const AddCounselor = () => {
   const {
     control,
@@ -15,17 +16,27 @@ const AddCounselor = () => {
     formState: { errors },
   } = useForm();
   const [isChecked, setIsChecked] = useState(false);
-
+  const { addCounselors } = useCounselorStore();
   const handleSwitchChange = (e) => {
     setIsChecked(e.target.checked);
   };
-  const option = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
+
+  const onSubmit = async (data) => {
+    const formData = {
+      name: data?.name,
+      designation: data?.designation,
+      email: data?.email,
+      experience: data?.experience,
+      mobile: data?.mobile,
+      password: "password123",
+      // status: data.status,
+      userType: "counsellor",
+      counsellorType: "career",
+    };
+
+    console.log("Form data:", formData);
+
+    await addCounselors(formData);
   };
   return (
     <Box bgcolor={"white"} padding={3} width={"804px"}>
@@ -47,7 +58,7 @@ const AddCounselor = () => {
               rules={{ required: "Name is required" }}
               render={({ field }) => (
                 <>
-                  <StyledInput placeholder="Enter Full Name"  {...field} />{" "}
+                  <StyledInput placeholder="Enter Full Name" {...field} />{" "}
                   {errors.name && (
                     <span style={{ color: "red" }}>{errors.name.message}</span>
                   )}{" "}
@@ -121,7 +132,7 @@ const AddCounselor = () => {
               rules={{ required: " Experience is required" }}
               render={({ field }) => (
                 <>
-                  <StyledSelectField {...field} options={option} />{" "}
+                  <StyledInput {...field} placeholder={"Experience"} />{" "}
                   {errors.experience && (
                     <span style={{ color: "red" }}>
                       {errors.experience.message}
@@ -141,23 +152,23 @@ const AddCounselor = () => {
               Contact Number
             </Typography>
             <Controller
-              name="contact"
+              name="mobile"
               control={control}
               defaultValue=""
               rules={{ required: "Contact is required" }}
               render={({ field }) => (
                 <>
                   <StyledInput placeholder="Conatct Number" {...field} />{" "}
-                  {errors.contact && (
+                  {errors.mobile && (
                     <span style={{ color: "red" }}>
-                      {errors.contact.message}
+                      {errors.mobile.message}
                     </span>
                   )}{" "}
                 </>
               )}
             />
           </Grid>
-          <Grid item md={6}>
+          {/* <Grid item md={6}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -183,8 +194,8 @@ const AddCounselor = () => {
                 </>
               )}
             />
-          </Grid>
-          <Grid item md={6}>
+          </Grid> */}
+          {/* <Grid item md={6}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -201,7 +212,8 @@ const AddCounselor = () => {
               render={({ field }) => (
                 <>
                   <StyledMultilineTextField
-                    {...field}rows={8}
+                    {...field}
+                    rows={8}
                     placeholder={"Add Description in less than 500 words"}
                   />{" "}
                   {errors.description && (
@@ -212,7 +224,7 @@ const AddCounselor = () => {
                 </>
               )}
             />
-          </Grid>
+          </Grid> */}
           <Grid item md={6}>
             <Stack direction={"row"} justifyContent={"space-between"}>
               <Typography
@@ -224,7 +236,7 @@ const AddCounselor = () => {
                 Activate
               </Typography>
               <Controller
-                name="activate"
+                name="status"
                 control={control}
                 defaultValue={false}
                 rules={{ required: "Activate is required" }}
@@ -237,9 +249,9 @@ const AddCounselor = () => {
                         handleSwitchChange(e);
                       }}
                     />{" "}
-                    {errors.activate && (
+                    {errors.status && (
                       <span style={{ color: "red" }}>
-                        {errors.activate.message}
+                        {errors.status.message}
                       </span>
                     )}{" "}
                   </>

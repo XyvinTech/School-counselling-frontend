@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
 
 const theme = createTheme({
   components: {
@@ -61,7 +62,9 @@ export const StyledCalender = ({ label, onChange, placeholder }) => {
   const handleDateChange = (date) => {
     setSelectedDate(date);
     if (onChange) {
-      onChange(date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const dayOfWeek = format(date, 'EEEE'); // Get the full day name like Monday, Tuesday
+      onChange(formattedDate, dayOfWeek);
     }
   };
 
@@ -72,12 +75,7 @@ export const StyledCalender = ({ label, onChange, placeholder }) => {
           label={label}
           value={selectedDate}
           onChange={handleDateChange}
-          renderInput={(params) => (
-            <CustomTextField
-              {...params}
-              placeholder={placeholder}
-            />
-          )}
+         inputVariant="outlined"
           sx={{ width: '100%' }}
         />
       </LocalizationProvider>

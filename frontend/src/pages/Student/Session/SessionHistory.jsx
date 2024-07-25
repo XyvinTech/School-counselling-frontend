@@ -1,26 +1,14 @@
 import { Box, Stack } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyledButton } from "../../../ui/StyledButton";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
-import {
-  userColumns as allsessionColumn,
-  userData as allsessionData,
-} from "../../../assets/json/AllSession";
-import {
-  completedColumns,
-  completedData,
-} from "../../../assets/json/CompletedSessionData";
-import {
-  cancelledColumns,
-  cancelledData,
-} from "../../../assets/json/CancelledSessionData";
-import {
-  rescheduledColumns,
-  rescheduledData,
-} from "../../../assets/json/RescheduledSessionData";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import StyledTable from "../../../ui/StyledTable";
+import { useListStore } from "../../../store/listStore";
+import { useNavigate } from "react-router-dom";
 const SessionHistory = () => {
+  const navigate = useNavigate();
+  const { lists, userSession } = useListStore();
   const [selectedTab, setSelectedTab] = useState("all");
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -44,21 +32,25 @@ const SessionHistory = () => {
   const handleView = (id) => {
     console.log("View item:", id);
   };
-  const getTableData = () => {
-    switch (selectedTab) {
-      case "completed":
-        return { columns: completedColumns, data: completedData };
-      case "cancel":
-        return { columns: cancelledColumns, data: cancelledData };
-      case "reschedule":
-        return { columns: rescheduledColumns, data: rescheduledData };
-      case "all":
-      default:
-        return { columns: allsessionColumn, data: allsessionData };
-    }
+  const handleReschedule = (rowData) => {
+    // console.log("View item:", id);
+    navigate(`/student/session/reschedule/${rowData.id}`, { state: { rowData } });
   };
 
-  const { columns, data } = getTableData();
+  const userColumns = [
+    { title: "Session No", field: "id" },
+    { title: "Councellor Name", field: "counsellor_name" },
+    { title: "Type of Counselling", field: "type" },
+    { title: "Session Date", field: "session_date" },
+    { title: "Session Time", field: "session_time" },
+    { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "sessions" };
+
+    userSession(filter);
+  }, [userSession]);
+  // console.log(lists);
   return (
     <>
       <Stack
@@ -108,10 +100,12 @@ const SessionHistory = () => {
       </Stack>
       <Box padding="30px" marginBottom={4}>
         <StyledTable
-          columns={columns}
-          data={data}
+          columns={userColumns}
           onSelectionChange={handleSelectionChange}
           onView={handleView}
+          menu
+          reschedule
+          onReschedule={handleReschedule}
         />
       </Box>
     </>

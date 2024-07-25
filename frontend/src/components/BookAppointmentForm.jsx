@@ -1,12 +1,16 @@
-import { Box, Grid, Stack, Typography } from '@mui/material'
-import React from "react";
-import StyledSelectField from '../ui/StyledSelectField'
-import { StyledCalender } from '../ui/StyledCalender'
-import { StyledTime } from '../ui/StyledTime'
-import { StyledMultilineTextField } from '../ui/StyledMultilineTextField '
-import StyledSwitch from '../ui/StyledSwitch';
-import { StyledButton } from '../ui/StyledButton';
+import { Box, Grid, Stack, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import StyledSelectField from "../ui/StyledSelectField";
+import { StyledCalender } from "../ui/StyledCalender";
+import { StyledTime } from "../ui/StyledTime";
+import { StyledMultilineTextField } from "../ui/StyledMultilineTextField ";
+import StyledSwitch from "../ui/StyledSwitch";
+import { StyledButton } from "../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
+import StyledInput from "../ui/StyledInput";
+import { useCounselorStore } from "../store/admin/CounselorStore";
+import { useTimeStore } from "../store/counselor/TimeStore";
+import { useSessionStore } from "../store/counselor/SessionStore";
 
 export default function AddMeeting() {
   const {
@@ -14,18 +18,68 @@ export default function AddMeeting() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const { counselors, fetchCounselors } = useCounselorStore();
+  const { addSessions } = useSessionStore();
+  const { slots, fetchSlot } = useTimeStore();
+  const [type, setType] = useState([]);
+  const [day, setDay] = useState([]);
+  const [id, setId] = useState([]);
+  useEffect(() => {
+    let filter = {};
+    if (type) {
+      filter.counsellorType = type;
+    }
 
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
-   
+    fetchCounselors(filter);
+  }, [fetchCounselors, type]);
+  useEffect(() => {
+    if (id != null && day != null) {
+      let filter = {
+        day: day,
+      };
+      fetchSlot(id, filter);
+    }
+  }, [id, day, fetchSlot]);
+
+  const handleDateChange = (formattedDate, dayOfWeek) => {
+    setDay(dayOfWeek);
+  };
+  const handleTypeChange = (selectedOption) => {
+    setType(selectedOption.value);
+  };
+  const handleCounselorChange = (selectedOption) => {
+    setId(selectedOption.value);
   };
 
-  const selectOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
+  const options =
+    counselors && Array.isArray(counselors)
+      ? counselors.map((list) => ({
+          value: list?.id,
+          label: list?.name,
+        }))
+      : [];
 
+  const timeOptions =
+    slots?.times?.map((time) => ({
+      value: time,
+      label: time,
+    })) || [];
+  const Counselor = [
+    { value: "career", label: "Career" },
+    { value: "behavioral", label: "Behavioral" },
+  ];
+  const onSubmit = async (data) => {
+    const formData = {
+      name: data?.name,
+      type: data?.type.value,
+      counsellor: data?.counsellor.value,
+      session_date: data?.session_date,
+      session_time: data?.session_time.value + ":00",
+      description: data.description,
+    };
+    console.log("Form data:", formData);
+   
+  };
   return (
     <Box sx={{ padding: 3 }} bgcolor={"white"} borderRadius={"4px"}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -40,70 +94,21 @@ export default function AddMeeting() {
               Add Meeting Name
             </Typography>
             <Controller
-              name="meetingName"
+              name="name"
               control={control}
               defaultValue=""
-              rules={{ required: "Meeting name is required" }}
+              rules={{ required: "Name is required" }}
               render={({ field }) => (
                 <>
-                  <StyledSelectField options={selectOptions} {...field} />
-                  {errors.meetingName && (
-                    <span style={{ color: "red" }}>{errors.meetingName.message}</span>
-                  )}
-                </>
-              )}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography
-              sx={{ marginBottom: 1 }}
-              variant="h6"
-              fontWeight={500}
-              color={"#333333"}
-            >
-              Date
-            </Typography>
-            <Controller
-              name="date"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Date is required" }}
-              render={({ field }) => (
-                <>
-                  <StyledCalender label="Select Date from Calender" {...field} />
-                  {errors.date && (
-                    <span style={{ color: "red" }}>{errors.date.message}</span>
+                  <StyledInput placeholder={"Name"} {...field} />
+                  {errors.name && (
+                    <span style={{ color: "red" }}>{errors.name.message}</span>
                   )}
                 </>
               )}
             />
           </Grid>
           <Grid item xs={6}>
-            <Typography
-              sx={{ marginBottom: 1 }}
-              variant="h6"
-              fontWeight={500}
-              color={"#333333"}
-            >
-              Time
-            </Typography>
-            <Controller
-              name="time"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Time is required" }}
-              render={({ field }) => (
-                <>
-                  <StyledTime label="Select Time" {...field} />
-                  {errors.time && (
-                    <span style={{ color: "red" }}>{errors.time.message}</span>
-                  )}
-                </>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -113,15 +118,22 @@ export default function AddMeeting() {
               Select Counselling Type
             </Typography>
             <Controller
-              name="counsellingType"
+              name="type"
               control={control}
               defaultValue=""
               rules={{ required: "Counselling type is required" }}
               render={({ field }) => (
                 <>
-                  <StyledSelectField options={selectOptions} {...field} />
-                  {errors.counsellingType && (
-                    <span style={{ color: "red" }}>{errors.counsellingType.message}</span>
+                  <StyledSelectField
+                    options={Counselor}
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleTypeChange(e);
+                    }}
+                  />
+                  {errors.type && (
+                    <span style={{ color: "red" }}>{errors.type.message}</span>
                   )}
                 </>
               )}
@@ -143,15 +155,84 @@ export default function AddMeeting() {
               rules={{ required: "Counsellor is required" }}
               render={({ field }) => (
                 <>
-                  <StyledSelectField options={selectOptions} {...field} />
+                  <StyledSelectField
+                    options={options}
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleCounselorChange(e);
+                    }}
+                  />
                   {errors.counsellor && (
-                    <span style={{ color: "red" }}>{errors.counsellor.message}</span>
+                    <span style={{ color: "red" }}>
+                      {errors.counsellor.message}
+                    </span>
                   )}
                 </>
               )}
             />
           </Grid>
           <Grid item xs={6}>
+            <Typography
+              sx={{ marginBottom: 1 }}
+              variant="h6"
+              fontWeight={500}
+              color={"#333333"}
+            >
+              Date
+            </Typography>
+            <Controller
+              name="session_date"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Date is required" }}
+              render={({ field }) => (
+                <>
+                  <StyledCalender
+                    label="Select Date from Calender"
+                    {...field}
+                    onChange={(formattedDate, dayOfWeek) => {
+                      field.onChange(formattedDate);
+                      handleDateChange(formattedDate, dayOfWeek);
+                    }}
+                  />
+                  {errors.session_date && (
+                    <span style={{ color: "red" }}>
+                      {errors.session_date.message}
+                    </span>
+                  )}
+                </>
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography
+              sx={{ marginBottom: 1 }}
+              variant="h6"
+              fontWeight={500}
+              color={"#333333"}
+            >
+              Time
+            </Typography>
+            <Controller
+              name="session_time"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Time is required" }}
+              render={({ field }) => (
+                <>
+                  <StyledSelectField options={timeOptions} {...field} />
+                  {errors.session_time && (
+                    <span style={{ color: "red" }}>
+                      {errors.session_time.message}
+                    </span>
+                  )}
+                </>
+              )}
+            />
+          </Grid>
+
+          {/* <Grid item xs={6}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -174,8 +255,8 @@ export default function AddMeeting() {
                 </>
               )}
             />
-          </Grid>
-          <Grid item xs={12}>
+          </Grid> */}
+          <Grid item xs={6}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -196,13 +277,15 @@ export default function AddMeeting() {
                     {...field}
                   />
                   {errors.description && (
-                    <span style={{ color: "red" }}>{errors.description.message}</span>
+                    <span style={{ color: "red" }}>
+                      {errors.description.message}
+                    </span>
                   )}
                 </>
               )}
             />
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Stack direction={"row"} justifyContent={"space-between"}>
               <Typography
                 sx={{ marginBottom: 1 }}
@@ -235,7 +318,7 @@ export default function AddMeeting() {
                 )}
               />
             </Stack>
-          </Grid>
+          </Grid> */}
           <Grid item xs={6}></Grid>
           <Grid item xs={6}></Grid>
           <Grid item xs={6}>
@@ -260,5 +343,5 @@ export default function AddMeeting() {
         </Grid>
       </form>
     </Box>
-  )
+  );
 }

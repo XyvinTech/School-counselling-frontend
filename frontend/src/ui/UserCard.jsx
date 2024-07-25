@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Stack, Typography } from "@mui/material";
 import { ReactComponent as EmailIcon } from "../assets/icons/EmailIcon.svg";
 import { ReactComponent as PhoneIcon } from "../assets/icons/PhoneIcon.svg";
-
+import image from "../assets/images/staff.png";
 const UserCard = ({ user }) => {
   return (
     <Grid
@@ -11,25 +11,17 @@ const UserCard = ({ user }) => {
       bgcolor={"white"}
       borderRadius={"12px"}
       padding={"10px"}
-      minHeight={"160px"}
+      minHeight={"180px"}
     >
-      {user?.img ? (
-        <Grid
-          item
-          md={4}
-          xs={6}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <img
-            src={user?.img}
-            alt="img"
-            width={"118px"}
-            height={"118px"}
-            style={{ borderRadius: "12px" }}
-          />
-        </Grid>
-      ) : null}
+      <Grid item md={4} xs={6} justifyContent={"center"} alignItems={"center"}>
+        <img
+          src={image}
+          alt="img"
+          width={"118px"}
+          height={"118px"}
+          style={{ borderRadius: "12px" }}
+        />
+      </Grid>
       <Grid item md={8} xs={6}>
         <Stack spacing={1}>
           {user?.id ? (
@@ -41,12 +33,12 @@ const UserCard = ({ user }) => {
             {user?.name}
           </Typography>
           <Typography variant="h6" color={"#4A4647"}>
-            {user?.title}
+            {user?.designation}
           </Typography>
           <Stack direction="row" alignItems="center" spacing={1}>
             <PhoneIcon />
             <Typography variant="h6" color={"#2C2829"}>
-              {user?.phone}
+              {user?.mobile}
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>

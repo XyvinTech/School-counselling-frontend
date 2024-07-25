@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Checkbox, IconButton, Grid } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { StyledTime } from "../ui/StyledTime";
@@ -6,6 +6,8 @@ import { StyledButton } from "../ui/StyledButton";
 import { ReactComponent as AddIcon } from "../assets/icons/AddIcon.svg";
 import { ReactComponent as CopyIcon } from "../assets/icons/CopyIcon.svg";
 import { ReactComponent as CloseIcon } from "../assets/icons/CloseIcon.svg";
+import { useTimeStore } from "../store/counselor/TimeStore";
+
 const daysOfWeek = [
   "Sunday",
   "Monday",
@@ -17,7 +19,8 @@ const daysOfWeek = [
 ];
 
 const AddTime = () => {
-  const { control, handleSubmit, reset } = useForm();
+  const { addTimes, times, getTimes } = useTimeStore();
+  const { control, handleSubmit } = useForm();
   const [availability, setAvailability] = useState(
     daysOfWeek.reduce((acc, day) => {
       acc[day] = [];
@@ -25,10 +28,22 @@ const AddTime = () => {
     }, {})
   );
 
+  useEffect(() => {
+    getTimes();
+  }, [getTimes]);
+
+  useEffect(() => {
+    const updatedAvailability = { ...availability };
+    times.forEach(({ day, times }) => {
+      updatedAvailability[day] = times;
+    });
+    setAvailability(updatedAvailability);
+  }, [times]);
+
   const handleAddClick = (day) => {
     setAvailability((prev) => ({
       ...prev,
-      [day]: [...prev[day], { from: "", to: "" }],
+      [day]: [...prev[day], ""],
     }));
   };
 
@@ -39,9 +54,26 @@ const AddTime = () => {
     }));
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const formattedData = daysOfWeek
+      .map((day) => ({
+        day,
+        times: data[day] && data[day].length > 0 ? data[day] : [],
+      }))
+      .filter(({ times }) => times.length > 0);
+
+    try {
+      await Promise.all(
+        formattedData.map(async ({ day, times }) => {
+          await addTimes({ day, times });
+        })
+      );
+      console.log("All times have been successfully added.");
+    } catch (error) {
+      console.error("Error adding times:", error);
+    }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container bgcolor={"white"}>
@@ -53,37 +85,35 @@ const AddTime = () => {
             bgcolor={"#fff"}
             marginBottom="10px"
           >
-            <>
-              <Grid item xs={4} display="flex" alignItems="center">
-                <Checkbox />
-                <Typography
-                  variant="h6"
-                  fontWeight={800}
-                  textTransform="uppercase"
-                  color={"rgba(0, 0, 0, 0.87)"}
-                >
-                  {day}
+            <Grid item xs={4} display="flex" alignItems="center">
+              <Checkbox />
+              <Typography
+                variant="h6"
+                fontWeight={800}
+                textTransform="uppercase"
+                color={"rgba(0, 0, 0, 0.87)"}
+              >
+                {day}
+              </Typography>
+            </Grid>
+            {availability[day].length === 0 ? (
+              <Grid item xs={4}>
+                <Typography variant="h6" color="rgba(0, 0, 0, 0.54)">
+                  Unavailable
                 </Typography>
               </Grid>
-              {availability[day].length === 0 ? (
-                <Grid item xs={4}>
-                  <Typography variant="h6" color="rgba(0, 0, 0, 0.54)">
-                    Unavailable
-                  </Typography>
-                </Grid>
-              ) : (
-                <Grid item xs={4}></Grid>
-              )}
-              <Grid item xs={4} display={"flex"} justifyContent="flex-end">
-                <IconButton onClick={() => handleAddClick(day)}>
-                  <AddIcon />
-                </IconButton>
-                <IconButton>
-                  <CopyIcon />
-                </IconButton>
-              </Grid>
-            </>
-            {availability[day].map((timeRange, index) => (
+            ) : (
+              <Grid item xs={4}></Grid>
+            )}
+            <Grid item xs={4} display={"flex"} justifyContent="flex-end">
+              <IconButton onClick={() => handleAddClick(day)}>
+                <AddIcon />
+              </IconButton>
+              <IconButton>
+                <CopyIcon />
+              </IconButton>
+            </Grid>
+            {availability[day].map((time, index) => (
               <Grid
                 container
                 item
@@ -94,22 +124,14 @@ const AddTime = () => {
                 marginBottom="10px"
               >
                 <Grid item xs={3}></Grid>
-                <Grid item xs={3}>
+                <Grid item xs={6}>
                   <Controller
-                    name={`${day}[${index}].from`}
+                    name={`${day}[${index}]`}
                     control={control}
-                    defaultValue={timeRange.from}
+                    defaultValue={time}
                     render={({ field }) => (
-                      <StyledTime label="From" {...field} />
+                      <StyledTime label="Time" {...field} />
                     )}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <Controller
-                    name={`${day}[${index}].to`}
-                    control={control}
-                    defaultValue={timeRange.to}
-                    render={({ field }) => <StyledTime label="To" {...field} />}
                   />
                 </Grid>
                 <Grid item xs={2} display="flex">

@@ -1,16 +1,22 @@
 import { Box, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserCard from "../../../../ui/UserCard";
 import StyledTable from "../../../../ui/StyledTable";
 import { userColumns, userData } from "../../../../assets/json/TableData";
 import imag from "../../../../assets/images/staff.png";
 import { ReactComponent as FilterIcon } from "../../../../assets/icons/FilterIcon.svg";
 import StyledSearchbar from "../../../../ui/StyledSearchbar";
+import { useParams } from "react-router-dom";
+import { useListStore } from "../../../../store/listStore";
+import { useCounselorStore } from "../../../../store/admin/CounselorStore";
+import ParentCard from "../../../../ui/ParentCard";
 const StudentSinglePage = () => {
+  const { id } = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const { lists, fetchSession } = useListStore();
+  const { counselor, fetchUser } = useCounselorStore();
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
@@ -43,19 +49,30 @@ const StudentSinglePage = () => {
     phone: "+1234567890",
     email: "john.doe@example.com",
   };
+  useEffect(() => {
+    if (id) {
+      fetchSession(id);
+    }
+  }, [id, fetchSession]);
+  useEffect(() => {
+    if (id) {
+      fetchUser(id);
+    }
+  }, [id, fetchUser]);
+  console.log("View item:", counselor);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
         <Typography variant="h4" color={"#4A4647"}>
-          Student List / John Doe
+          Student List / {counselor.name}
         </Typography>
       </Box>{" "}
       <Grid container spacing={4} padding={4}>
-        <Grid item md={5} spacing={2}>
-          <UserCard user={data} />
+        <Grid item md={5} spacing={2}  xs={12}>
+          <UserCard user={counselor}/>
         </Grid>
-        <Grid item md={4} spacing={2}>
-          <UserCard user={user} />
+        <Grid item md={4} spacing={2}xs={12}>
+          <ParentCard user={counselor}  />
         </Grid>
       </Grid>
       <Tabs

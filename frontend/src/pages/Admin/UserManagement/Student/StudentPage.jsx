@@ -1,16 +1,16 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { userColumns, userData } from "../../../../assets/json/StudentListData";
+import React, { useEffect, useState } from "react";
 import StyledTable from "../../../../ui/StyledTable";
 import { useNavigate } from "react-router-dom";
 
 import { ReactComponent as FilterIcon } from "../../../../assets/icons/FilterIcon.svg";
 import StyledSearchbar from "../../../../ui/StyledSearchbar";
+import { useListStore } from "../../../../store/listStore";
 const StudentPage = () => {
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const { lists, fetchLists } = useListStore();
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
@@ -27,6 +27,23 @@ const StudentPage = () => {
     console.log("View item:", id);
     navigate(`/user/student/${id}`);
   };
+  const userColumns = [
+    { title: "Student ID", field: "StudentID", padding: "none" },
+
+    { title: "Student Name", field: "name" },
+    { title: "Class", field: "Class" },
+    { title: "Division", field: "Division" },
+    { title: "Email Id  ", field: "email" },
+    { title: "Contact info", field: "mobile" },
+    { title: "Parent Name", field: "ParentName" },
+    { title: "Parent Contact", field: "ParentContact" },
+  ];
+  useEffect(() => {
+    let filter = { type: "students" };
+
+    fetchLists(filter);
+  }, [fetchLists]);
+  console.log(lists);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -62,7 +79,6 @@ const StudentPage = () => {
           </Stack>
           <StyledTable
             columns={userColumns}
-            data={userData}
             onSelectionChange={handleSelectionChange}
             onView={handleView}
           />{" "}

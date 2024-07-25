@@ -20,6 +20,8 @@ import { ReactComponent as ViewIcon } from "../assets/icons/ViewIcon.svg";
 import { ReactComponent as LeftIcon } from "../assets/icons/LeftIcon.svg";
 import { ReactComponent as RightIcon } from "../assets/icons/RightIcon.svg";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useListStore } from "../store/listStore";
+import { useNavigate } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)`
   &.${tableCellClasses.head} {
@@ -27,7 +29,6 @@ const StyledTableCell = styled(TableCell)`
     color: rgba(0, 0, 0, 0.87);
     font-size: 14px;
     padding: 16px;
-
     text-align: center;
     font-weight: 600;
   }
@@ -57,16 +58,25 @@ const StyledTable = ({
   onSelectionChange,
   onView,
   onDelete,
-  data,
+  onAdd,
   dashboard,
+  menu,
+  counselor,
+  onReschedule,
+  reschedule,
+  onEntry
 }) => {
+  const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [rowId, setRowId] = useState(null);
+  const [rowData, setRowData] = useState(null);
+
+  const { lists } = useListStore();
 
   const handleSelectAllClick = (event) => {
     const isChecked = event.target.checked;
-    const newSelectedIds = isChecked ? data.map((row) => row.id) : [];
+    const newSelectedIds = isChecked ? lists.map((row) => row.id) : [];
     setSelectedIds(newSelectedIds);
     onSelectionChange(newSelectedIds);
   };
@@ -80,14 +90,16 @@ const StyledTable = ({
     onSelectionChange(newSelectedIds);
   };
 
-  const handleMenuOpen = (event, id) => {
+  const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
-    setRowId(id);
+    setRowId(row.id);
+    setRowData(row);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
     setRowId(null);
+    setRowData(null);
   };
 
   const handleView = () => {
@@ -101,6 +113,27 @@ const StyledTable = ({
     handleMenuClose();
   };
 
+  const handleReschedule = () => {
+    if (rowData) {
+      onReschedule(rowData); // Add reschedule logic here
+      console.log("Reschedule", rowData);
+    }
+    handleMenuClose();
+  };
+  const handleAddLink = () => {
+    if (rowData) {
+      onAdd(rowData); // Add reschedule logic here
+      console.log("Reschedule", rowData);
+    }
+    handleMenuClose();
+  };
+  const handleAddEntry = () => {
+    if (rowData) {
+      onEntry(rowData); // Add reschedule logic here
+      console.log("Reschedule", rowData);
+    }
+    handleMenuClose();
+  };
   const handleRowClick = (id) => {
     onView(id);
   };
@@ -109,7 +142,7 @@ const StyledTable = ({
 
   const getStatusVariant = (status) => {
     if (typeof status === "boolean") {
-      return status ? "green" : "rejected";
+      return status ? "#2E7D32" : "#BFBABA";
     }
     switch (status) {
       case "active":
@@ -120,21 +153,23 @@ const StyledTable = ({
         return "#2E7D32";
       case "pending":
         return "#BFBABA";
-      case "upcoming": 
+      case "upcoming":
         return "#0072BC";
-      case "ongoing": 
+      case "ongoing":
         return "green";
-      case "closed": 
+      case "closed":
         return "#938F8F";
-      case "completed": 
+      case "completed":
         return "#2E7D32";
-      case "live":        
+      case "live":
         return "red";
-      case "Recording Available": 
+      case "Recording Available":
         return "green";
-      case "published": 
+      case "published":
         return "green";
-      case "draft": 
+        case "accepted":
+          return "green";
+      case "draft":
         return "#BFBABA";
       default:
         return "default";
@@ -150,7 +185,7 @@ const StyledTable = ({
               <StyledTableCell padding="checkbox">
                 <Checkbox
                   checked={
-                    data.length > 0 && selectedIds.length === data.length
+                    lists.length > 0 && selectedIds.length === lists.length
                   }
                   onChange={handleSelectAllClick}
                 />
@@ -167,7 +202,7 @@ const StyledTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((row) => (
+            {lists?.map((row) => (
               <StyledTableRow
                 role="checkbox"
                 key={row.id}
@@ -202,7 +237,11 @@ const StyledTable = ({
                             color: "#fff",
                           }}
                         >
-                          {row[column.field]}
+                          {typeof row[column.field] === "boolean"
+                            ? row[column.field]
+                              ? "active"
+                              : "inactive"
+                            : row[column.field]}
                         </span>
                       </Box>
                     ) : (
@@ -212,30 +251,45 @@ const StyledTable = ({
                 ))}
 
                 <StyledTableCell padding="normal">
-                <Box display="flex" alignItems="center">
-                  <IconButton
-                    aria-controls="simple-view"
-                    aria-haspopup="true"
-                    onClick={() => handleRowClick(row.id)}
-                  >
-                    <ViewIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={(event) => handleMenuOpen(event, row.id)}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    id="row-menu"
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl) && rowId === row.id}
-                    onClose={handleMenuClose}
-                  >
-                    <MenuItem onClick={handleView}>View</MenuItem>
-                    <MenuItem onClick={handleDelete}>Delete</MenuItem>
-                  </Menu></Box>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      aria-controls="simple-view"
+                      aria-haspopup="true"
+                      onClick={() => handleRowClick(row.id)}
+                    >
+                      <ViewIcon />
+                    </IconButton>
+                    {menu && (
+                      <IconButton
+                        aria-controls="simple-menu"
+                        aria-haspopup="true"
+                        onClick={(event) => handleMenuOpen(event, row)}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                    )}
+                    <Menu
+                      id="row-menu"
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl) && rowId === row.id}
+                      onClose={handleMenuClose}
+                    >
+                   {counselor ? (
+                        <>
+                          <MenuItem onClick={handleReschedule}>Reschedule</MenuItem>
+                          <MenuItem onClick={handleAddLink}>Add Link</MenuItem>
+                          <MenuItem onClick={handleAddEntry}>Add Session Entry</MenuItem>
+                        </>
+                      ) : reschedule ? (
+                        <MenuItem onClick={handleReschedule}>Reschedule</MenuItem>
+                      ) : (
+                        <>
+                          <MenuItem onClick={handleView}>View</MenuItem>
+                          <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                        </>
+                      )}
+                    </Menu>
+                  </Box>
                 </StyledTableCell>
               </StyledTableRow>
             ))}

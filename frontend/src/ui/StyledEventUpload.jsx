@@ -45,8 +45,8 @@ const ImagePreview = styled(Box)({
 const S3_BUCKET = "school-counselling";
 const REGION = "ap-south-1";
 AWS.config.update({
-  accessKeyId: "AKIAZQ3DOONQI5LA2Y6G",
-  secretAccessKey: "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",
+  accessKeyId:import.meta.env.VITE_ACCESS_KEYID,
+  secretAccessKey: import.meta.env.VITE_SECRET_ACCESSKEY,
   region: REGION,
 });
 

@@ -8,6 +8,7 @@ import { useListStore } from "../../../store/listStore";
 import { useNavigate } from "react-router-dom";
 import AddLink from "../../../components/AddLink";
 import Reschedule from "../../../components/Reschedule";
+import CancelSession from "../../../components/CancelSession";
 
 const CounsellorCases = () => {
   const navigate = useNavigate();
@@ -16,7 +17,9 @@ const CounsellorCases = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [addLinkOpen, setAddLinkOpen] = useState(false);
+  const [isChange, setIsChange] = useState(false);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [counselor, setCounselor] = useState(null);
   const handleOpenFilter = () => {
@@ -45,21 +48,33 @@ const CounsellorCases = () => {
     setAddLinkOpen(true);
   };
   const handleAddEntry = (rowData) => {
-    navigate("/counselor/session/addentry", { state: { rowData } });
+    navigate(`/counselor/session/addentry/${rowData.id}`, {
+      state: { rowData },
+    });
   };
+  // setIsChange(!isChange);
   const handleReschedule = (rowData) => {
     console.log("View item:", rowData);
     setSelectedRowId(rowData.id);
     setCounselor(rowData.counsellor);
     setRescheduleOpen(true);
   };
+  const handleCancel = (rowData) => {
+    setSelectedRowId(rowData.id);
+
+    setCancelOpen(true); setIsChange(!isChange);
+  };
   const handleCloseReschedule = () => {
     setRescheduleOpen(false);
     setSelectedRowId(null);
-    setCounselor(null);
+    setCounselor(null); setIsChange(!isChange);
   };
   const handleCloseLink = () => {
     setAddLinkOpen(false);
+    setSelectedRowId(null); setIsChange(!isChange);
+  };
+  const handleCloseCancel = () => {
+    setCancelOpen(false);
     setSelectedRowId(null);
   };
 
@@ -75,7 +90,7 @@ const CounsellorCases = () => {
   useEffect(() => {
     let filter = { type: "sessions" };
     counselorSessions(filter);
-  }, [counselorSessions]);
+  }, [isChange,counselorSessions]);
 
   return (
     <>
@@ -130,6 +145,7 @@ const CounsellorCases = () => {
           onEntry={handleAddEntry}
           onReschedule={handleReschedule}
           onAdd={handleAddLink}
+          onCancel={handleCancel}
         />
       </Box>
       <Reschedule
@@ -141,6 +157,11 @@ const CounsellorCases = () => {
       <AddLink
         open={addLinkOpen}
         onClose={handleCloseLink}
+        rowId={selectedRowId}
+      />
+      <CancelSession
+        open={cancelOpen}
+        onClose={handleCloseCancel}
         rowId={selectedRowId}
       />
     </>

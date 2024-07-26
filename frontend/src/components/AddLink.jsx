@@ -9,7 +9,7 @@ import { useSessionStore } from "../store/counselor/SessionStore";
 const AddLink = ({ open, onClose, rowId }) => {
   const {
     control,
-    handleSubmit,
+    handleSubmit,reset,
     formState: { errors },
   } = useForm();
   const { acceptSessions } = useSessionStore();
@@ -24,12 +24,11 @@ const AddLink = ({ open, onClose, rowId }) => {
       link: data?.link,
     };
     await acceptSessions(rowId, formData);
-    // You can perform additional actions here, such as making an API call
-    // After the form is successfully submitted, you can close the dialog
+    reset();
     onClose();
   };
-
-  const handleClear = () => {
+  const handleClear = (event) => {
+    event.preventDefault();
     onClose();
   };
 
@@ -85,7 +84,7 @@ const AddLink = ({ open, onClose, rowId }) => {
           <StyledButton
             variant="secondary"
             name="Cancel"
-            onClick={handleClear}
+            onClick={(event) => handleClear(event)}
           />
           <StyledButton variant="primary" name="Save" type="submit" />
         </Stack>{" "}

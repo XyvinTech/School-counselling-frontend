@@ -7,20 +7,27 @@ import StyledSwitch from "/src/ui/StyledSwitch.jsx";
 import DropZone from "../ui/DropZone";
 import { Controller, useForm } from "react-hook-form";
 import { StyledMultilineTextField } from "../ui/StyledMultilineTextField ";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useTimeStore } from "../store/counselor/TimeStore";
+import { useCounselorStore } from "../store/admin/CounselorStore";
+import { useSessionStore } from "../store/counselor/SessionStore";
 
 export default function AddEntry() {
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
   const location = useLocation();
+  const { id } = useParams();
   const { slots, timeSlot } = useTimeStore();
+  const { counselors, allCounselors } = useCounselorStore();
+  const { counsellorAddEntry } = useSessionStore();
   const { rowData } = location.state || {};
   const [isCloseCase, setIsCloseCase] = useState(false);
   const [isReferCase, setIsReferCase] = useState(false);
+  const [counselor, setCounselor] = useState(rowData?.counsellor || "");
   const [day, setDay] = useState([]);
   const handleSwitchChange = (e, setter) => {
     setter(e.target.checked);
@@ -29,25 +36,58 @@ export default function AddEntry() {
     setDay(dayOfWeek);
   };
   useEffect(() => {
-    if (rowData?.counsellor != null && day != null) {
+    if (counselor != null && day != null) {
       let filter = {
         day: day,
       };
-      timeSlot(rowData?.counsellor, filter);
+      timeSlot(counselor, filter);
     }
-  }, [rowData?.counsellor, day, timeSlot]);
+  }, [counselor, day, timeSlot]);
+  useEffect(() => {
+    let filter = {};
+
+    allCounselors(filter);
+  }, [allCounselors]);
+  const handleCounselor = (selectedOption) => {
+    setCounselor(selectedOption.value);
+  };
+  const options =
+    counselors && Array.isArray(counselors)
+      ? counselors.map((list) => ({
+          value: list?.id,
+          label: list?.name,
+        }))
+      : [];
   const option = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
+    { value: "A", label: "A" },
+    { value: "B", label: "B" },
+    { value: "C", label: "C" },
   ];
   const timeOptions =
-  slots?.times?.map((time) => ({
-    value: time,
-    label: time,
-  })) || [];
-  const onSubmit = (data) => {
-    // console.log("Form data:", data);
+    slots?.times?.map((time) => ({
+      value: time,
+      label: time,
+    })) || [];
+  const onSubmit = async (data) => {
+    const formData = {
+      grade: data?.grade.value,
+      details: data?.details,
+      close: data?.close,
+
+      session_id: rowData?.id,
+      user_id: rowData?.user,
+    };
+    if (data?.referCase) {
+      formData.refer = counselor;
+      formData.remarks =data?. remarks;
+    }
+    if (!data?.close) {
+      formData.date = data?.date;
+      formData.time = data?.time.value + ":00";
+    }
+    await counsellorAddEntry(rowData.case_id, formData);
+    reset();
+    console.log("rowdata", formData);
   };
 
   return (
@@ -107,7 +147,7 @@ export default function AddEntry() {
                   Case Details
                 </Typography>
                 <Controller
-                  name="caseDetails"
+                  name="details"
                   control={control}
                   defaultValue=""
                   rules={{ required: "Case details are required" }}
@@ -144,12 +184,12 @@ export default function AddEntry() {
                     render={({ field }) => (
                       <>
                         <StyledSwitch
-                          checked={field.value || isReferCase} // Ensure switch is true if isReferCase is true
+                          checked={field.value || isReferCase}
                           onChange={(e) => {
                             field.onChange(e.target.checked);
                             handleSwitchChange(e, setIsCloseCase);
                           }}
-                          disabled={isReferCase} // Disable switch if isReferCase is true
+                          disabled={isReferCase}
                         />{" "}
                       </>
                     )}
@@ -167,7 +207,7 @@ export default function AddEntry() {
                     Refer Case
                   </Typography>
                   <Controller
-                    name="refer"
+                    name="referCase"
                     control={control}
                     defaultValue={false}
                     render={({ field }) => (
@@ -178,7 +218,7 @@ export default function AddEntry() {
                             field.onChange(e.target.checked);
                             handleSwitchChange(e, setIsReferCase);
                             if (e.target.checked) {
-                              setIsCloseCase(true); // Set isCloseCase to true if isReferCase is true
+                              setIsCloseCase(true);
                             }
                           }}
                         />{" "}
@@ -200,7 +240,7 @@ export default function AddEntry() {
                       Date of Next Appointment
                     </Typography>
                     <Controller
-                      name="appointmentDate"
+                      name="date"
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
@@ -227,12 +267,12 @@ export default function AddEntry() {
                       Time
                     </Typography>
                     <Controller
-                      name="session_time"
+                      name="time"
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
                         <>
-                          <StyledSelectField {...field}options={timeOptions} />
+                          <StyledSelectField {...field} options={timeOptions} />
                         </>
                       )}
                     />
@@ -252,15 +292,19 @@ export default function AddEntry() {
                       Referred to
                     </Typography>
                     <Controller
-                      name="referredTo"
+                      name="refer"
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
                         <>
                           <StyledSelectField
-                            options={option}
+                            options={options}
                             label="Referred To"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleCounselor(e);
+                            }}
                           />
                         </>
                       )}
@@ -300,7 +344,7 @@ export default function AddEntry() {
                       Date of Next Appointment
                     </Typography>
                     <Controller
-                      name="appointmentDate"
+                      name="date"
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
@@ -308,6 +352,10 @@ export default function AddEntry() {
                           <StyledCalender
                             label="Select Date from Calendar"
                             {...field}
+                            onChange={(formattedDate, dayOfWeek) => {
+                              field.onChange(formattedDate);
+                              handleDateChange(formattedDate, dayOfWeek);
+                            }}
                           />
                         </>
                       )}
@@ -323,12 +371,12 @@ export default function AddEntry() {
                       Time
                     </Typography>
                     <Controller
-                      name="session_time"
+                      name="time"
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
                         <>
-                          <StyledSelectField {...field} />
+                          <StyledSelectField {...field} options={timeOptions} />
                         </>
                       )}
                     />

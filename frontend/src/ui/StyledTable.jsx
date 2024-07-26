@@ -64,7 +64,8 @@ const StyledTable = ({
   counselor,
   onReschedule,
   reschedule,
-  onEntry
+  onEntry,
+  onCancel
 }) => {
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState([]);
@@ -115,22 +116,25 @@ const StyledTable = ({
 
   const handleReschedule = () => {
     if (rowData) {
-      onReschedule(rowData); // Add reschedule logic here
-      console.log("Reschedule", rowData);
+      onReschedule(rowData);
     }
     handleMenuClose();
   };
   const handleAddLink = () => {
     if (rowData) {
-      onAdd(rowData); // Add reschedule logic here
-      console.log("Reschedule", rowData);
+      onAdd(rowData);
+    }
+    handleMenuClose();
+  };
+  const handleCancel = () => {
+    if (rowData) {
+      onCancel(rowData);
     }
     handleMenuClose();
   };
   const handleAddEntry = () => {
     if (rowData) {
-      onEntry(rowData); // Add reschedule logic here
-      console.log("Reschedule", rowData);
+      onEntry(rowData);
     }
     handleMenuClose();
   };
@@ -167,8 +171,8 @@ const StyledTable = ({
         return "green";
       case "published":
         return "green";
-        case "accepted":
-          return "green";
+      case "accepted":
+        return "green";
       case "draft":
         return "#BFBABA";
       default:
@@ -274,14 +278,21 @@ const StyledTable = ({
                       open={Boolean(anchorEl) && rowId === row.id}
                       onClose={handleMenuClose}
                     >
-                   {counselor ? (
+                      {counselor ? (
                         <>
-                          <MenuItem onClick={handleReschedule}>Reschedule</MenuItem>
+                          <MenuItem onClick={handleReschedule}>
+                            Reschedule
+                          </MenuItem>
                           <MenuItem onClick={handleAddLink}>Add Link</MenuItem>
-                          <MenuItem onClick={handleAddEntry}>Add Session Entry</MenuItem>
+                          <MenuItem onClick={handleAddEntry}>
+                            Add Session Entry
+                          </MenuItem>
+                          <MenuItem onClick={handleCancel}>Cancel</MenuItem>
                         </>
                       ) : reschedule ? (
-                        <MenuItem onClick={handleReschedule}>Reschedule</MenuItem>
+                        <MenuItem onClick={handleReschedule}>
+                          Reschedule
+                        </MenuItem>
                       ) : (
                         <>
                           <MenuItem onClick={handleView}>View</MenuItem>

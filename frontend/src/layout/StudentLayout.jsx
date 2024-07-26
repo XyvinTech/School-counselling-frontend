@@ -57,6 +57,10 @@ const subNavigation = [
   { name: "Settings", to: "/student/settings", icon: <SettingsOutlinedIcon /> },
 ];
 const SimpleDialog = ({ open, onClose }) => {
+  const { student, getAdmin, isChange } = useAuthStore();
+  useEffect(() => {
+    getAdmin();
+  }, [isChange]);
   const navigate = useNavigate();
   return (
     <Dialog
@@ -83,10 +87,10 @@ const SimpleDialog = ({ open, onClose }) => {
           />
           <Box>
             <Typography variant="h6" color="#292D32" paddingBottom={1}>
-              Alex meian
+            {student?.name}
             </Typography>
             <Typography variant="h7" color="rgba(41, 45, 50, 0.44)">
-              Admin
+            {student?.usertype}
             </Typography>
           </Box>
         </Stack>
@@ -100,7 +104,7 @@ const StudentLayout = (props) => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const { counselor ,logoutAuth} = useAuthStore();
+  const { student ,logoutAuth} = useAuthStore();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
@@ -132,6 +136,7 @@ const StudentLayout = (props) => {
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
+  console.log('false',student);
   const drawer = (
     <div style={{ position: "relative", height: "100%" }}>
       <Toolbar sx={{ height: "88px" }}>
@@ -349,14 +354,14 @@ const StudentLayout = (props) => {
                 />
                 <Box sx={{ marginLeft: "10px" }}>
                   <Typography variant="h6" color={"#292D32"} display="block">
-                    Alex Meian
+                  {student?.name}
                   </Typography>
                   <Typography
                     variant="h7"
                     color={"rgba(41, 45, 50, 0.44)"}
                     display="block"
                   >
-                    Admin
+                   {student?.usertype}
                   </Typography>
                 </Box>
               </Box>

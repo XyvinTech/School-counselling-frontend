@@ -1,18 +1,16 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
-import {
-  activeSessionColumns,
-  activeSessionData,
-} from "../../../assets/json/ActiveSessionData";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import { ReactComponent as CalendarIcon } from "../../../assets/icons/CalendarIcon.svg";
 import { ReactComponent as DashboardIcon } from "../../../assets/icons/DashboardIcon.svg";
 import { useNavigate } from "react-router-dom";
 import StyledTable from "../../../ui/StyledTable";
 import BigCalendar from "../../../ui/BigCalendar";
+import { useListStore } from "../../../store/listStore";
 const UpcomingSession = () => {
   const navigate = useNavigate();
+  const { lists, counselorSessions } = useListStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -34,9 +32,20 @@ const UpcomingSession = () => {
 
   const handleView = (id) => {
     console.log("View item:", id);
-    navigate(`/counselor/upcomminSession/${id}`);
+    // navigate(`/counselor/upcomminSession/${id}`);
   };
-
+  const userColumns = [
+    { title: "Case ID", field: "case_id" },
+    { title: "Session No", field: "id" },
+    { title: "Student Name", field: "user_name" },
+    { title: "Type of Counselling", field: "type" },
+    { title: "Session Time", field: "session_time" },
+    { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "sessions" };
+    counselorSessions(filter);
+  }, [counselorSessions]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -95,8 +104,7 @@ const UpcomingSession = () => {
             </Box>
           ) : (
             <StyledTable
-              columns={activeSessionColumns}
-              data={activeSessionData}
+              columns={userColumns}
               onSelectionChange={handleSelectionChange}
               onView={handleView}
             />

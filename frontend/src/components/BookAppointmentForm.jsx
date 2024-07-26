@@ -15,6 +15,7 @@ import { useSessionStore } from "../store/counselor/SessionStore";
 export default function AddMeeting() {
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm();
@@ -22,8 +23,8 @@ export default function AddMeeting() {
   const { addSessions } = useSessionStore();
   const { slots, fetchSlot } = useTimeStore();
   const [type, setType] = useState([]);
-  const [day, setDay] = useState([]);
-  const [id, setId] = useState([]);
+  const [day, setDay] = useState();
+  const [id, setId] = useState();
   useEffect(() => {
     let filter = {};
     if (type) {
@@ -33,13 +34,11 @@ export default function AddMeeting() {
     fetchCounselors(filter);
   }, [fetchCounselors, type]);
   useEffect(() => {
-    if (id != null && day != null) {
-      let filter = {
-        day: day,
-      };
+    if (id && day) {
+      const filter = { day };
       fetchSlot(id, filter);
     }
-  }, [id, day, fetchSlot]);
+  }, [id, day]);
 
   const handleDateChange = (formattedDate, dayOfWeek) => {
     setDay(dayOfWeek);
@@ -77,8 +76,9 @@ export default function AddMeeting() {
       session_time: data?.session_time.value + ":00",
       description: data.description,
     };
-    // console.log("Form data:", formData);
-   
+    console.log("Form data:", formData);
+    await addSessions(formData);
+    reset();
   };
   return (
     <Box sx={{ padding: 3 }} bgcolor={"white"} borderRadius={"4px"}>

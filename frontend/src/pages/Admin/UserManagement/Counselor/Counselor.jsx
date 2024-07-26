@@ -11,13 +11,16 @@ export const Counselor = () => {
   const navigate = useNavigate();
   const { lists, fetchLists } = useListStore();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [isChange, setIsChange] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
-
+  const handleIsChange = () => {
+    setIsChange(!isChange);
+  };
   const handleCloseFilter = () => {
     setFilterOpen(false);
   };
@@ -46,8 +49,7 @@ export const Counselor = () => {
     let filter = { type: "counsellers" };
 
     fetchLists(filter);
-  }, [fetchLists]);
-  console.log(lists);
+  }, [isChange, fetchLists]);
   return (
     <>
       <Tabs
@@ -116,7 +118,7 @@ export const Counselor = () => {
             />{" "}
           </>
         )}
-        {selectedTab === 1 && <AddCounselor />}
+        {selectedTab === 1 && <AddCounselor onChange={handleIsChange} />}
         {selectedTab === 2 && (
           <Grid container spacing={2}>
             <Grid item xs={6}>

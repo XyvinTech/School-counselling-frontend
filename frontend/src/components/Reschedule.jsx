@@ -11,7 +11,7 @@ import { useTimeStore } from "../store/counselor/TimeStore";
 const Reschedule = ({ open, onClose, rowId,counselor }) => {
   const {
     control,
-    handleSubmit,
+    handleSubmit,reset,
     formState: { errors },
   } = useForm();
   const [day, setDay] = useState([]);
@@ -40,13 +40,13 @@ const Reschedule = ({ open, onClose, rowId,counselor }) => {
         session_time: data?.session_time.value + ":00",
       };
       await rescheduleSession(rowId,formData);
-   
-    onClose();
-  };
-
-  const handleClear = () => {
-    onClose();
-  };
+      reset();
+      onClose();
+    };
+    const handleClear = (event) => {
+      event.preventDefault();
+      onClose();
+    };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
@@ -93,7 +93,7 @@ const Reschedule = ({ open, onClose, rowId,counselor }) => {
           <StyledButton
             variant="secondary"
             name="Cancel"
-            onClick={handleClear}
+            onClick={(event) => handleClear(event)}
           />
           <StyledButton variant="primary" name="Save" type="submit" />
         </Stack>{" "}

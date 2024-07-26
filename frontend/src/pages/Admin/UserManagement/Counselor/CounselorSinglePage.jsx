@@ -8,40 +8,17 @@ import Review from "../../../../components/Review";
 import { useCounselorStore } from "../../../../store/admin/CounselorStore";
 import { useParams } from "react-router-dom";
 import { useListStore } from "../../../../store/listStore";
+import CounsellingSessionTable from "../../../../components/CounsellingSessionTable";
+import CounselorCaseTable from "../../../../components/CounselorCaseTable";
 const CounselorSinglePage = () => {
   const { id } = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
-  const [selectedRows, setSelectedRows] = useState([]);
   const { counselor, fetchUser } = useCounselorStore();
-  const { fetchCounselorSession, fetchCounselorCase } = useListStore();
 
-  const handleSelectionChange = (newSelectedIds) => {
-    setSelectedRows(newSelectedIds);
-    console.log("Selected items:", newSelectedIds);
-  };
-
-  const handleView = (id) => {
-    console.log("View item:", id);
-  };
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-  const sessions = [
-    { title: "Session No’", field: "Session No’", padding: "none" },
 
-    { title: "Student Name", field: "Student Name" },
-    { title: "Type ", field: "Type " },
-    { title: "Date & Time", field: "Date & Time" },
-    { title: "Grade", field: "Grade" },
-    { title: "Status", field: "status" },
-  ];
-  const Cases = [
-    { title: "Case ID", field: "Case ID", padding: "none" },
-    { title: "Created on", field: "Created on" },
-    { title: "Student Name ", field: "Student Name" },
-    { title: "Counselor Name", field: "Counselor Name" },
-    { title: "Status", field: "status" },
-  ];
   const Reports = [
     { title: "Certificate name", field: "Certificate name", padding: "none" },
     { title: "Recieved on ", field: "Recieved on " },
@@ -50,10 +27,8 @@ const CounselorSinglePage = () => {
   useEffect(() => {
     if (id) {
       fetchUser(id);
-      fetchCounselorSession(id);
-      fetchCounselorCase(id);
     }
-  }, [id, fetchUser, fetchCounselorSession, fetchCounselorCase]);
+  }, [id, fetchUser]);
 
   return (
     <>
@@ -64,7 +39,7 @@ const CounselorSinglePage = () => {
       </Box>{" "}
       <Grid container spacing={4} padding={4}>
         <Grid item md={4} spacing={2} xs={12}>
-          <UserCard user={counselor}  />
+          <UserCard user={counselor} />
         </Grid>
         <Grid item md={4} spacing={2} xs={12}>
           <CounsellingTypeCard user={counselor} />
@@ -106,33 +81,14 @@ const CounselorSinglePage = () => {
         <Tab label="Reviews" />
       </Tabs>
       <Box padding="30px" marginBottom={4}>
-        {selectedTab === 0 && (
-          <StyledTable
-            columns={sessions}
-            onSelectionChange={handleSelectionChange}
-            onView={handleView}
-          />
-        )}
+        {selectedTab === 0 && <CounsellingSessionTable id={id} />}
         {selectedTab === 1 && (
           <Typography>
             {" "}
-            <StyledTable
-              columns={Reports}
-              onSelectionChange={handleSelectionChange}
-              onView={handleView}
-            />
+            <StyledTable columns={Reports} />
           </Typography>
         )}
-        {selectedTab === 2 && (
-          <Typography>
-            {" "}
-            <StyledTable
-              columns={Cases}
-              onSelectionChange={handleSelectionChange}
-              onView={handleView}
-            />
-          </Typography>
-        )}
+        {selectedTab === 2 && <CounselorCaseTable id={id} />}
         {selectedTab === 3 && (
           <Typography>
             <Review />

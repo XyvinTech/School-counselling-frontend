@@ -1,8 +1,9 @@
 import { create } from "zustand";
-import { toast } from "react-toastify";
 import {
   acceptSession,
+  addEntry,
   addSession,
+  cancelcounselorSession,
   counselorReschedule,
   getCounselorSessionReport,
   getSessionReport,
@@ -13,27 +14,17 @@ const useSessionStore = create((set) => ({
   sessions: [],
 
   addSessions: async (data) => {
-    try {
-      const newData = await addSession(data);
-      set((state) => ({ sessions: [...state.sessions, newData] }));
-      toast.success(newData.message);
-    } catch (error) {
-      toast.error(error.message || "Failed to add counselor");
-    }
+    const newData = await addSession(data);
+    set((state) => ({ sessions: [...state.sessions, newData] }));
   },
 
   updateSession: async (id, data) => {
-    try {
-      const updatedData = await reschedule(id, data);
-      set((state) => ({
-        sessions: state.sessions.map((session) =>
-          session.id === id ? updatedData : session
-        ),
-      }));
-      toast.success(updatedData.message);
-    } catch (error) {
-      toast.error(error.message || "Failed to reschedule session");
-    }
+    const updatedData = await reschedule(id, data);
+    set((state) => ({
+      sessions: state.sessions.map((session) =>
+        session.id === id ? updatedData : session
+      ),
+    }));
   },
 
   fetchReport: async (id) => {
@@ -41,36 +32,36 @@ const useSessionStore = create((set) => ({
     set({ sessions: report.data });
   },
   acceptSessions: async (id, data) => {
-    try {
-      const updatedData = await acceptSession(id, data);
-      set((state) => ({
-        sessions: state.sessions.map((session) =>
-          session.id === id ? updatedData : session
-        ),
-      }));
-      toast.success(updatedData.message);
-    } catch (error) {
-      toast.error(error.message || "Failed to reschedule session");
-    }
+    const updatedData = await acceptSession(id, data);
+    set((state) => ({
+      sessions: state.sessions.map((session) =>
+        session.id === id ? updatedData : session
+      ),
+    }));
   },
   counsellorReport: async (id) => {
     const report = await getCounselorSessionReport(id);
     set({ sessions: report.data });
   },
   rescheduleSession: async (id, data) => {
-    try {
-      const updatedData = await counselorReschedule(id, data);
-      set((state) => ({
-        sessions: state.sessions.map((session) =>
-          session.id === id ? updatedData : session
-        ),
-      }));
-      toast.success(updatedData.message);
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to reschedule session";
-      toast.error(errorMessage);
-    }
+    const updatedData = await counselorReschedule(id, data);
+    set((state) => ({
+      sessions: state.sessions.map((session) =>
+        session.id === id ? updatedData : session
+      ),
+    }));
+  },
+  counsellorAddEntry: async (id, data) => {
+    const newData = await addEntry(id, data);
+    set((state) => ({ sessions: [...state.sessions, newData] }));
+  },
+  cancelSessionByCounselor: async (id) => {
+    const updatedData = await cancelcounselorSession(id);
+    set((state) => ({
+      sessions: state.sessions.map((session) =>
+        session.id === id ? updatedData : session
+      ),
+    }));
   },
 }));
 

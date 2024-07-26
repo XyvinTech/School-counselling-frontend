@@ -8,7 +8,7 @@ import StyledSwitch from "../ui/StyledSwitch";
 import { StyledButton } from "../ui/StyledButton";
 import { Controller, useForm } from "react-hook-form";
 import { useCounselorStore } from "../store/admin/CounselorStore";
-const AddCounselor = () => {
+const AddCounselor = ({ onChange }) => {
   const {
     control,
     handleSubmit,
@@ -37,6 +37,9 @@ const AddCounselor = () => {
     
 
     await addCounselors(formData);
+    onChange();
+    reset()
+
   };
   return (
     <Box bgcolor={"white"} padding={3} width={"804px"}>

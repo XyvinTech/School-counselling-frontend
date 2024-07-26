@@ -264,7 +264,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/counselor/session/addentry",
+    path: "/counselor/session/addentry/:id",
     element: (
       <CounselorLayout>
         <AddEntry />

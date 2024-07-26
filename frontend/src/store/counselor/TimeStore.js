@@ -14,7 +14,7 @@ const useTimeStore = create((set) => ({
     try {
       const newTime = await addTime(data);
       set((state) => ({ times: [...state.times, newTime] }));
-      toast.success(`Avilability added successfully`);
+      toast.success(newTime.message );
     } catch (error) {
       toast.error(error);
     }

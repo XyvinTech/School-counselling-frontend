@@ -34,7 +34,7 @@ const AddCounselor = () => {
       counsellorType: "career",
     };
 
-    console.log("Form data:", formData);
+    
 
     await addCounselors(formData);
   };

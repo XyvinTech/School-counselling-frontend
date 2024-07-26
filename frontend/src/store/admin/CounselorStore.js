@@ -14,7 +14,7 @@ const useCounselorStore = create((set) => ({
     try {
       const newCounselor = await addCounselor(data);
       set((state) => ({ counselors: [...state.counselors, newCounselor] }));
-      toast.success(`Counselor successfully`);
+      toast.success(newCounselor.message);
     } catch (error) {
       toast.error(error);
     }

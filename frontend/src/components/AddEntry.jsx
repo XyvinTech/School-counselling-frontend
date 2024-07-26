@@ -47,7 +47,7 @@ export default function AddEntry() {
     label: time,
   })) || [];
   const onSubmit = (data) => {
-    console.log("Form data:", data);
+    // console.log("Form data:", data);
   };
 
   return (

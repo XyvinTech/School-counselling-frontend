@@ -77,7 +77,7 @@ export default function AddMeeting() {
       session_time: data?.session_time.value + ":00",
       description: data.description,
     };
-    console.log("Form data:", formData);
+    // console.log("Form data:", formData);
    
   };
   return (

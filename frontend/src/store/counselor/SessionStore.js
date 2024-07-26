@@ -16,7 +16,7 @@ const useSessionStore = create((set) => ({
     try {
       const newData = await addSession(data);
       set((state) => ({ sessions: [...state.sessions, newData] }));
-      toast.success("Counselor added successfully");
+      toast.success(newData.message);
     } catch (error) {
       toast.error(error.message || "Failed to add counselor");
     }

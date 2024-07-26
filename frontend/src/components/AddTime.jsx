@@ -68,7 +68,7 @@ const AddTime = () => {
           await addTimes({ day, times });
         })
       );
-      console.log("All times have been successfully added.");
+      // console.log("All times have been successfully added.");
     } catch (error) {
       console.error("Error adding times:", error);
     }

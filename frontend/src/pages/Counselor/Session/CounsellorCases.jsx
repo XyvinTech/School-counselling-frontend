@@ -62,20 +62,24 @@ const CounsellorCases = () => {
   const handleCancel = (rowData) => {
     setSelectedRowId(rowData.id);
 
-    setCancelOpen(true); setIsChange(!isChange);
+    setCancelOpen(true);
+    setIsChange(!isChange);
   };
   const handleCloseReschedule = () => {
     setRescheduleOpen(false);
     setSelectedRowId(null);
-    setCounselor(null); setIsChange(!isChange);
+    setCounselor(null);
+    setIsChange(!isChange);
   };
   const handleCloseLink = () => {
     setAddLinkOpen(false);
-    setSelectedRowId(null); setIsChange(!isChange);
+    setSelectedRowId(null);
+    setIsChange(!isChange);
   };
   const handleCloseCancel = () => {
     setCancelOpen(false);
     setSelectedRowId(null);
+    setIsChange(!isChange);
   };
 
   const userColumns = [
@@ -90,7 +94,7 @@ const CounsellorCases = () => {
   useEffect(() => {
     let filter = { type: "sessions" };
     counselorSessions(filter);
-  }, [isChange,counselorSessions]);
+  }, [isChange, counselorSessions]);
 
   return (
     <>

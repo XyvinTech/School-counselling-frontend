@@ -12,7 +12,8 @@ const CancelSession = ({ open, onClose, rowId }) => {
     onClose();
   };
 
-  const handleClear = () => {
+  const handleClear = (event) => {
+    event.preventDefault();
     onClose();
   };
 
@@ -43,7 +44,7 @@ const CancelSession = ({ open, onClose, rowId }) => {
           <StyledButton
             variant="secondary"
             name="Cancel"
-            onClick={handleClear}
+            onClick={(event) => handleClear(event)}
           />
           <StyledButton variant="primary" name="Sure" type="submit" />
         </Stack>{" "}

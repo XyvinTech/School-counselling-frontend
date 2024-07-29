@@ -14,7 +14,7 @@ export default defineConfig({
     port: 3000,
 },
 build: {
-  outDir: 'frontend/dist',
+  outDir: 'dist',
 },
 resolve: {
     alias: {

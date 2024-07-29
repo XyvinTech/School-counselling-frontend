@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
   Box,
   Button,
@@ -12,9 +12,9 @@ import { useForm, Controller } from "react-hook-form";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Link, useNavigate } from "react-router-dom";
-import { getLogin } from "../../api/student/authApi";
+import { getLogin } from "../../api/admin/adminapi";
 
-function StudentLoginPage() {
+function LoginPage() {
   const navigate = useNavigate();
   const {
     control,
@@ -28,7 +28,7 @@ function StudentLoginPage() {
       const user = await getLogin(data);
       console.log(user.data);
       localStorage.setItem("token", user.data);
-      navigate("/student/bookappoinment");
+      navigate("/dashboard");
     } catch (error) {
       console.error("error", error);
     }
@@ -158,4 +158,4 @@ function StudentLoginPage() {
   );
 }
 
-export default StudentLoginPage;
+export default LoginPage;

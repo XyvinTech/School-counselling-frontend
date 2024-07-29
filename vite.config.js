@@ -6,19 +6,5 @@ export default defineConfig({
   plugins: [
     react(),
     svgr(), 
-  ],
-  define: {
-    global: {}, 
-  },
-  server: {
-    port: 3000,
-},
-build: {
-  outDir: 'dist',
-},
-resolve: {
-    alias: {
-        './runtimeConfig': './runtimeConfig.browser',
-    },
-},
+  ]
 });

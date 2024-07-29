@@ -1,23 +1,28 @@
 import { Box, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { userColumns, userData } from "../../../assets/json/TableData";
+import React, { useEffect, useState } from "react";
 import StyledTable from "../../../ui/StyledTable";
 import { useNavigate } from "react-router-dom";
 import AddEvent from "../../../components/AddEvent";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
+import { useListStore } from "../../../store/listStore";
 export default function Events() {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
+  const { lists, fetchLists } = useListStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const [search, setSearch] = useState("");
+  const [isChange, setIsChange] = useState(false);
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
 
   const handleCloseFilter = () => {
     setFilterOpen(false);
+  };
+  const handleIsChange = () => {
+    setIsChange(!isChange);
   };
   const handleSelectionChange = (newSelectedIds) => {
     setSelectedRows(newSelectedIds);
@@ -26,13 +31,28 @@ export default function Events() {
 
   const handleView = (id) => {
     console.log("View item:", id);
-    navigate(`/events/${id}`);
+    // navigate(`/events/${id}`);
   };
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-
+  const userColumns = [
+    { title: "Event Date", field: "date", padding: "none" },
+  
+    { title: "Time", field: "time" },
+    { title: "Event Name", field: "title" },
+    // { title: "Designation", field: "designation" },
+    // { title: "Experience Level", field: "experience" },
+    // { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "events" };
+    if (search) {
+      filter.searchQuery = search;
+    }
+    fetchLists(filter);
+  }, [isChange, fetchLists,search]);
   return (
     <>
       <Tabs
@@ -74,7 +94,10 @@ export default function Events() {
               alignItems={"center"}
             >
               <Stack direction={"row"} spacing={2}>
-                <StyledSearchbar />
+              <StyledSearchbar
+            placeholder={"Search Event Name"}
+            onchange={(e) => setSearch(e.target.value)}
+          />
                 <Box
                   bgcolor={"#FFFFFF"}
                   borderRadius={"50%"}
@@ -93,7 +116,7 @@ export default function Events() {
             </Stack>
             <StyledTable
               columns={userColumns}
-              data={userData}
+              // data={userData}
               onSelectionChange={handleSelectionChange}
               onView={handleView}
             />{" "}
@@ -103,7 +126,7 @@ export default function Events() {
           <Grid container spacing={2}>
             <Grid item xs={9}>
               {" "}
-              <AddEvent />
+              <AddEvent onChange={handleIsChange}  />
             </Grid>{" "}
           </Grid>
         )}

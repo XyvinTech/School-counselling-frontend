@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { Box, Typography, Grid, Stack } from "@mui/material";
 import { StyledTime } from "../ui/StyledTime";
 import StyledSelectField from "../ui/StyledSelectField";
-import { StyledEventUpload } from "../ui/StyledEventUpload";
 import { StyledButton } from "../ui/StyledButton";
 import { StyledMultilineTextField } from "../ui/StyledMultilineTextField ";
 import { StyledCalender } from "../ui/StyledCalender";
 import StyledSwitch from "/src/ui/StyledSwitch.jsx";
 import StyledInput from "../ui/StyledInput";
 import { Controller, useForm } from "react-hook-form";
+import { StyledEventUpload } from "../ui/StyledEventUpload";
+import StyledUploadImage from "../ui/StyledUploadImage";
+import { useEventStore } from "../store/eventStore";
 
-export default function AddEvent() {
+export default function AddEvent({ onChange }) {
   const {
     control,
     handleSubmit,
@@ -18,7 +20,7 @@ export default function AddEvent() {
     formState: { errors },
   } = useForm();
   const [isChecked, setIsChecked] = useState(false);
-
+  const { addEvents } = useEventStore();
   const handleSwitchChange = (e) => {
     setIsChecked(e.target.checked);
   };
@@ -27,14 +29,23 @@ export default function AddEvent() {
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" },
   ];
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
+  const onSubmit = async (data) => {
+    const formData = {
+      date: data?.date,
+      time: data?.time + ":00",
+      event_image: data?.image,
+      description: data?.description,
+      title: data?.title,
+    };
+    await addEvents(formData);
+    onChange();
+    reset();
   };
   return (
     <Box sx={{ padding: 3 }} bgcolor={"white"} borderRadius={"4px"}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={4}>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -57,7 +68,7 @@ export default function AddEvent() {
                 </>
               )}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={6}>
             <Typography
               sx={{ marginBottom: 1 }}
@@ -68,15 +79,15 @@ export default function AddEvent() {
               Name
             </Typography>
             <Controller
-              name="name"
+              name="title"
               control={control}
               defaultValue=""
               rules={{ required: "Name is required" }}
               render={({ field }) => (
                 <>
-                  <StyledInput placeholder="Enter your E-mail ID" {...field} />
-                  {errors.name && (
-                    <span style={{ color: "red" }}>{errors.name.message}</span>
+                  <StyledInput placeholder="Enter title" {...field} />
+                  {errors.title && (
+                    <span style={{ color: "red" }}>{errors.title.message}</span>
                   )}{" "}
                 </>
               )}
@@ -149,7 +160,7 @@ export default function AddEvent() {
               rules={{ required: "Image is required" }}
               render={({ field: { onChange } }) => (
                 <>
-                  <StyledEventUpload
+                  <StyledUploadImage
                     label="Upload your Image here"
                     onChange={onChange}
                   />{" "}
@@ -160,7 +171,7 @@ export default function AddEvent() {
               )}
             />
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Typography
               sx={{ marginBottom: 1 }}
               variant="h6"
@@ -329,7 +340,7 @@ export default function AddEvent() {
                 </>
               )}
             />
-          </Grid>{" "}
+          </Grid>{" "} */}
           <Grid item xs={6}>
             <Typography
               sx={{ marginBottom: 1 }}
@@ -360,7 +371,7 @@ export default function AddEvent() {
               )}
             />
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Stack direction={"row"} justifyContent={"space-between"}>
               <Typography
                 sx={{ marginBottom: 1 }}
@@ -393,7 +404,7 @@ export default function AddEvent() {
                 )}
               />
             </Stack>
-          </Grid>
+          </Grid> */}
           <Grid item xs={6}></Grid> <Grid item xs={6}></Grid>
           <Grid item xs={6}>
             {" "}

@@ -1,16 +1,14 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledTable from "../../../ui/StyledTable";
-import { useNavigate } from "react-router-dom";
-import {
-  userColumns,
-  userData,
-} from "../../../assets/json/CaseSectionSessionlistData";
+import { useNavigate, useParams } from "react-router-dom";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
+import { useListStore } from "../../../store/listStore";
 const SessionPage = () => {
   const navigate = useNavigate();
-  const [selectedRows, setSelectedRows] = useState([]);
+  const { adminSesssionsByCaseId } = useListStore();
+  const { id } = useParams();
   const [filterOpen, setFilterOpen] = useState(false);
 
   const handleOpenFilter = () => {
@@ -20,20 +18,31 @@ const SessionPage = () => {
   const handleCloseFilter = () => {
     setFilterOpen(false);
   };
-  const handleSelectionChange = (newSelectedIds) => {
-    setSelectedRows(newSelectedIds);
-    console.log("Selected items:", newSelectedIds);
-  };
 
   const handleView = (id) => {
     console.log("View item:", id);
     navigate(`/cases/session/${id}`);
   };
+  const userColumns = [
+    { title: "Session No", field: "id", padding: "none" },
+
+    { title: "Student Name", field: "user_name" },
+    { title: "Counselor Name", field: "counsellor_name" },
+    { title: "Type", field: "type" },
+    { title: "Date", field: "session_date" },
+    { title: "Time", field: "session_time" },
+    { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    if (id) {
+      adminSesssionsByCaseId(id);
+    }
+  }, [id, adminSesssionsByCaseId]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
         <Typography variant="h4" color={"#4A4647"}>
-          Cases / Case ID
+          Cases / { id }
         </Typography>
       </Box>{" "}
       <Box padding="30px" marginBottom={4}>
@@ -62,12 +71,7 @@ const SessionPage = () => {
               </Box>
             </Stack>
           </Stack>{" "}
-          <StyledTable
-            columns={userColumns}
-            data={userData}
-            onSelectionChange={handleSelectionChange}
-            onView={handleView}
-          />{" "}
+          <StyledTable columns={userColumns} onView={handleView} />{" "}
         </>
       </Box>
     </>

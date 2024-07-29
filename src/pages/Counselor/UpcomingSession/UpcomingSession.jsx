@@ -12,6 +12,7 @@ const UpcomingSession = () => {
   const navigate = useNavigate();
   const { lists, counselorSessions } = useListStore();
   const [selectedRows, setSelectedRows] = useState([]);
+  const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const handleOpenFilter = () => {
@@ -43,10 +44,12 @@ const UpcomingSession = () => {
     { title: "Status", field: "status" },
   ];
   useEffect(() => {
-    let filter = { type: "sessions" ,status: "pending"};
-
+    let filter = { type: "sessions", status: "pending" };
+    if (search) {
+      filter.searchQuery = search;
+    }
     counselorSessions(filter);
-  }, [counselorSessions]);
+  }, [counselorSessions, search]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -67,7 +70,10 @@ const UpcomingSession = () => {
               Session list
             </Typography>
             <Stack direction={"row"} spacing={2}>
-              <StyledSearchbar />
+              <StyledSearchbar
+                placeholder={"Search Student Name"}
+                onchange={(e) => setSearch(e.target.value)}
+              />
               <Box
                 bgcolor={"#FFFFFF"}
                 borderRadius={"50%"}

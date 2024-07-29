@@ -1,17 +1,15 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
-import {
-  userColumns,
-  userData,
-} from "../../../assets/json/CaseSectionCaseData";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StyledTable from "../../../ui/StyledTable";
 
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
+import { useListStore } from "../../../store/listStore";
 export default function CasesSection() {
   const navigate = useNavigate();
-  const [selectedRows, setSelectedRows] = useState([]);
+  const { fetchLists } = useListStore();
+  const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
 
   const handleOpenFilter = () => {
@@ -21,15 +19,25 @@ export default function CasesSection() {
   const handleCloseFilter = () => {
     setFilterOpen(false);
   };
-  const handleSelectionChange = (newSelectedIds) => {
-    setSelectedRows(newSelectedIds);
-    console.log("Selected items:", newSelectedIds);
-  };
 
   const handleView = (id) => {
-    console.log("View item:", id);
     navigate(`/cases/case/${id}`);
   };
+  const userColumns = [
+    { title: "Case ID", field: "id", padding: "none" },
+
+    { title: "Created on", field: "createdAt" },
+    { title: "Student Name", field: "user_name" },
+    { title: "Counselor Name", field: "counsellor_name" },
+    { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "cases" };
+    if (search) {
+      filter.searchQuery = search;
+    }
+    fetchLists(filter);
+  }, [fetchLists, search]);
   return (
     <>
       {" "}
@@ -47,7 +55,10 @@ export default function CasesSection() {
             alignItems={"center"}
           >
             <Stack direction={"row"} spacing={2}>
-              <StyledSearchbar />
+              <StyledSearchbar
+                placeholder={"Search Student Name"}
+                onchange={(e) => setSearch(e.target.value)}
+              />
               <Box
                 bgcolor={"#FFFFFF"}
                 borderRadius={"50%"}
@@ -64,12 +75,7 @@ export default function CasesSection() {
               </Box>
             </Stack>
           </Stack>
-          <StyledTable
-            columns={userColumns}
-            data={userData}
-            onSelectionChange={handleSelectionChange}
-            onView={handleView}
-          />{" "}
+          <StyledTable columns={userColumns} onView={handleView} />{" "}
         </>
       </Box>
     </>

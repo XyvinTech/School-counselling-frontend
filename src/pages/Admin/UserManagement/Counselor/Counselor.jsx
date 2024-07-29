@@ -11,6 +11,7 @@ export const Counselor = () => {
   const navigate = useNavigate();
   const { lists, fetchLists } = useListStore();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [search, setSearch] = useState("");
   const [isChange, setIsChange] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -47,9 +48,11 @@ export const Counselor = () => {
   ];
   useEffect(() => {
     let filter = { type: "counsellers" };
-
+    if (search) {
+      filter.searchQuery = search;
+    }
     fetchLists(filter);
-  }, [isChange, fetchLists]);
+  }, [isChange, fetchLists, search]);
   return (
     <>
       <Tabs
@@ -94,7 +97,10 @@ export const Counselor = () => {
               alignItems={"center"}
             >
               <Stack direction={"row"} spacing={2}>
-                <StyledSearchbar />
+                <StyledSearchbar
+                  placeholder={"Search Counselor Name"}
+                  onchange={(e) => setSearch(e.target.value)}
+                />
                 <Box
                   bgcolor={"#FFFFFF"}
                   borderRadius={"50%"}

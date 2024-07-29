@@ -24,6 +24,7 @@ export default function AddMeeting() {
   const { slots, fetchSlot } = useTimeStore();
   const [type, setType] = useState([]);
   const [day, setDay] = useState();
+  const [date, setDate] = useState();
   const [id, setId] = useState();
   useEffect(() => {
     let filter = {};
@@ -35,12 +36,13 @@ export default function AddMeeting() {
   }, [fetchCounselors, type]);
   useEffect(() => {
     if (id && day) {
-      const filter = { day };
+      const filter = { day, date };
       fetchSlot(id, filter);
     }
-  }, [id, day]);
+  }, [id, day, date]);
 
   const handleDateChange = (formattedDate, dayOfWeek) => {
+    setDate(formattedDate);
     setDay(dayOfWeek);
   };
   const handleTypeChange = (selectedOption) => {
@@ -59,7 +61,7 @@ export default function AddMeeting() {
       : [];
 
   const timeOptions =
-    slots?.times?.map((time) => ({
+    slots?.map((time) => ({
       value: time,
       label: time,
     })) || [];
@@ -80,6 +82,7 @@ export default function AddMeeting() {
     await addSessions(formData);
     reset();
   };
+  console.log(slots)
   return (
     <Box sx={{ padding: 3 }} bgcolor={"white"} borderRadius={"4px"}>
       <form onSubmit={handleSubmit(onSubmit)}>

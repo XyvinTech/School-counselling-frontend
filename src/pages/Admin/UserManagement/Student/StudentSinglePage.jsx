@@ -74,11 +74,11 @@ const StudentSinglePage = () => {
         </Typography>
       </Box>{" "}
       <Grid container spacing={4} padding={4}>
-        <Grid item md={5} spacing={2}  xs={12}>
-          <UserCard user={counselor}/>
+        <Grid item md={5} spacing={2} xs={12}>
+          <UserCard user={counselor} />
         </Grid>
-        <Grid item md={4} spacing={2}xs={12}>
-          <ParentCard user={counselor}  />
+        <Grid item md={4} spacing={2} xs={12}>
+          <ParentCard user={counselor} />
         </Grid>
       </Grid>
       <Tabs
@@ -118,7 +118,7 @@ const StudentSinglePage = () => {
             paddingBottom={3}
             alignItems={"center"}
           >
-            <Stack direction={"row"} spacing={2}>
+            {/* <Stack direction={"row"} spacing={2}>
               <StyledSearchbar />
               <Box
                 bgcolor={"#FFFFFF"}
@@ -134,15 +134,10 @@ const StudentSinglePage = () => {
               >
                 <FilterIcon />
               </Box>
-            </Stack>
+            </Stack> */}
           </Stack>
 
-          {selectedTab === 0 && (
-            <StyledTable
-              columns={sessions}
-           
-            />
-          )}
+          {selectedTab === 0 && <StyledTable columns={sessions} />}
           {selectedTab === 1 && <Typography>Not Found</Typography>}
           {selectedTab === 2 && <Typography>Not Found</Typography>}
         </>{" "}

@@ -1,16 +1,18 @@
 import { Box, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StyledTable from "../../../ui/StyledTable";
 import { useNavigate } from "react-router-dom";
 import AddEvent from "../../../components/AddEvent";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
-import { userColumns, userData } from '../../../assets/json/CounselorEventTable';
+import { useListStore } from "../../../store/listStore";
 
 const CounselorEvent = () => {
     const [selectedTab, setSelectedTab] = useState(0);
-    const [selectedRows, setSelectedRows] = useState([]);
     const [filterOpen, setFilterOpen] = useState(false);
+    const { lists, fetchLists } = useListStore();
+    const [search, setSearch] = useState("");
+    const [isChange, setIsChange] = useState(false);
     const navigate=useNavigate();
     const handleOpenFilter = () => {
       setFilterOpen(true);
@@ -19,20 +21,30 @@ const CounselorEvent = () => {
     const handleCloseFilter = () => {
       setFilterOpen(false);
     };
-    const handleSelectionChange = (newSelectedIds) => {
-      setSelectedRows(newSelectedIds);
-      console.log("Selected items:", newSelectedIds);
-    };
-  
-    const handleView = (id) => {
-     
-      console.log("View item:", id);
-      navigate(`/counselor/event/${id}`);
-    };
+
   
     const handleChange = (event, newValue) => {
       setSelectedTab(newValue);
     };
+    const handleIsChange = () => {
+      setIsChange(!isChange);
+    };
+    const userColumns = [
+      { title: "Event Date", field: "date", padding: "none" },
+    
+      { title: "Time", field: "time" },
+      { title: "Event Name", field: "title" },
+      // { title: "Designation", field: "designation" },
+      // { title: "Experience Level", field: "experience" },
+      // { title: "Status", field: "status" },
+    ];
+    useEffect(() => {
+      let filter = { type: "events" };
+      if (search) {
+        filter.searchQuery = search;
+      }
+      fetchLists(filter);
+    }, [isChange, fetchLists,search]);
   return (
     <>
       {" "}
@@ -75,7 +87,10 @@ const CounselorEvent = () => {
               alignItems={"center"}
             >
               <Stack direction={"row"} spacing={2}>
-                <StyledSearchbar />
+              <StyledSearchbar
+            placeholder={"Search Event Name"}
+            onchange={(e) => setSearch(e.target.value)}
+          />
                 <Box
                   bgcolor={"#FFFFFF"}
                   borderRadius={"50%"}
@@ -94,9 +109,7 @@ const CounselorEvent = () => {
             </Stack>
             <StyledTable
               columns={userColumns}
-              data={userData}
-              onSelectionChange={handleSelectionChange}
-              onView={handleView}
+             
             />{" "}
           </>
         )}
@@ -104,7 +117,7 @@ const CounselorEvent = () => {
           <Grid container spacing={2}>
             <Grid item xs={9}>
               {" "}
-              <AddEvent />
+              <AddEvent onChange={handleIsChange}  />
             </Grid>{" "}
           </Grid>
         )}

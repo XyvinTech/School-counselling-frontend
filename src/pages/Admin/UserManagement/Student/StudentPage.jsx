@@ -9,6 +9,7 @@ import { useListStore } from "../../../../store/listStore";
 const StudentPage = () => {
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
+  const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const { lists, fetchLists } = useListStore();
   const handleOpenFilter = () => {
@@ -40,10 +41,11 @@ const StudentPage = () => {
   ];
   useEffect(() => {
     let filter = { type: "students" };
-
+    if (search) {
+      filter.searchQuery = search;
+    }
     fetchLists(filter);
-  }, [fetchLists]);
-  console.log(lists);
+  }, [fetchLists,search]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -60,7 +62,10 @@ const StudentPage = () => {
             alignItems={"center"}
           >
             <Stack direction={"row"} spacing={2}>
-              <StyledSearchbar />
+              <StyledSearchbar
+                placeholder={"Search Student Name"}
+                onchange={(e) => setSearch(e.target.value)}
+              />
               <Box
                 bgcolor={"#FFFFFF"}
                 borderRadius={"50%"}

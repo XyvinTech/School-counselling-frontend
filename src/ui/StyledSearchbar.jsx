@@ -1,11 +1,13 @@
 import React from "react";
 import { Box, TextField, InputAdornment } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../assets/icons/SearchIcon.svg";
-const StyledSearchbar = () => {
+
+const StyledSearchbar = ({onchange,placeholder}) => {
   return (
     <TextField
       variant="outlined"
-      placeholder="Search Event"
+      placeholder={placeholder}
+      onChange={onchange}
       sx={{
         width: "320px",
         

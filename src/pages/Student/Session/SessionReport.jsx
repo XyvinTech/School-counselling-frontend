@@ -31,7 +31,6 @@ const SessionReport = () => {
       fetchReport(id);
     }
   }, [id, fetchReport]);
-    console.log("sessions", sessions);
 
   return (
     <>

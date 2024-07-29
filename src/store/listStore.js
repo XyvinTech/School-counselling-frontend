@@ -8,11 +8,33 @@ import {
   getSession,
   getUserSession,
 } from "../api/listapi";
-import { getSessionByCase } from "../api/counselor/sessionApi";
+import {
+  getAdminSessionByCase,
+  getSessionByCase,
+} from "../api/counselor/sessionApi";
 
 const useListStore = create((set, get) => ({
   lists: [],
+  totalCount: 0,
+  rowPerSize: 10,
+  pageNo: 1,
+  pageInc: () => {
+    const { pageNo, totalCount, rowPerSize } = get();
+    const totalPages = Math.ceil(totalCount / rowPerSize);
 
+    if (pageNo < totalPages) {
+      set({ pageNo: pageNo + 1 });
+    }
+  },
+  pageDec: () => {
+    const { pageNo } = get();
+    if (pageNo > 1) {
+      set({ pageNo: pageNo - 1 });
+    }
+  },
+  rowChange: (value) => {
+    set({ rowPerSize: value, pageNo: 1 });
+  },
   fetchLists: async (filter) => {
     set({ lists: [] });
     const allData = await fetchList(filter);
@@ -52,6 +74,11 @@ const useListStore = create((set, get) => ({
   counselorSesssionsByCaseId: async (id) => {
     set({ lists: [] });
     const session = await counselorSessionByCase(id);
+    set({ lists: session.data });
+  },
+  adminSesssionsByCaseId: async (id) => {
+    set({ lists: [] });
+    const session = await getAdminSessionByCase(id);
     set({ lists: session.data });
   },
 }));

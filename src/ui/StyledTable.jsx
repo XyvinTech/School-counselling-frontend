@@ -53,7 +53,7 @@ const StyledTableRow = styled(TableRow)`
     background-color: ${({ showEdit }) => (showEdit ? "#f0f0f0" : "inherit")};
   }
 `;
-const formatDate = (dateString, format = "MMM DD, YYYY hh:mm A") => {
+const formatDate = (dateString, format = "MMM DD, YYYY ") => {
   return moment.tz(dateString, "Asia/Muscat").format(format);
 };
 const StyledTable = ({
@@ -76,7 +76,8 @@ const StyledTable = ({
   const [rowId, setRowId] = useState(null);
   const [rowData, setRowData] = useState(null);
 
-  const { lists } = useListStore();
+  const { lists, totalCount, rowPerSize, rowChange, pageNo, pageInc, pageDec } =
+    useListStore();
 
   const handleSelectAllClick = (event) => {
     const isChecked = event.target.checked;
@@ -264,11 +265,11 @@ const StyledTable = ({
                               : row[column.field]}
                           </span>
                         </Box>
-                      ) : ["createdAt", "updatedAt", ].includes(
-                        column.field
-                      ) ? (
-                      formatDate(row[column.field])
-                    )  : (
+                      ) : ["createdAt", "updatedAt", "date"].includes(
+                          column.field
+                        ) ? (
+                        formatDate(row[column.field])
+                      ) : (
                         row[column.field]
                       )}
                     </StyledTableCell>
@@ -312,9 +313,12 @@ const StyledTable = ({
                             <MenuItem onClick={handleCancel}>Cancel</MenuItem>
                           </>
                         ) : reschedule ? (
-                          <MenuItem onClick={handleReschedule}>
-                            Reschedule
-                          </MenuItem>
+                          <>
+                            <MenuItem onClick={handleReschedule}>
+                              Reschedule
+                            </MenuItem>
+                            <MenuItem onClick={handleCancel}>Cancel</MenuItem>
+                          </>
                         ) : (
                           <>
                             <MenuItem onClick={handleView}>View</MenuItem>
@@ -350,6 +354,12 @@ const StyledTable = ({
               <Box display="flex" alignItems="center">
                 <TablePagination
                   component="div"
+                  rowsPerPage={rowPerSize}
+                  labelDisplayedRows={({ from, to }) =>
+                    `${pageNo}-${Math.ceil(
+                      totalCount / rowPerSize
+                    )} of ${totalCount}`
+                  }
                   ActionsComponent={({ onPageChange }) => (
                     <Stack
                       direction="row"
@@ -357,8 +367,32 @@ const StyledTable = ({
                       alignItems="center"
                       marginLeft={2}
                     >
-                      <LeftIcon />
-                      <RightIcon />
+                      {" "}
+                      <Box
+                        onClick={pageDec}
+                        sx={{
+                          cursor: pageNo > 1 ? "pointer" : "not-allowed",
+                          opacity: pageNo > 1 ? 1 : 0.5,
+                        }}
+                      >
+                        <LeftIcon />{" "}
+                      </Box>
+                      <Box
+                        onClick={pageInc}
+                        sx={{
+                          cursor:
+                            pageNo < Math.ceil(totalCount / rowPerSize)
+                              ? "pointer"
+                              : "not-allowed",
+                          opacity:
+                            pageNo < Math.ceil(totalCount / rowPerSize)
+                              ? 1
+                              : 0.5,
+                        }}
+                      >
+                        {" "}
+                        <RightIcon />{" "}
+                      </Box>
                     </Stack>
                   )}
                 />

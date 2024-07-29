@@ -31,7 +31,7 @@ const CaseSession = () => {
   const userColumns = [
     { title: "Session No", field: "id", padding: "none" },
     { title: "Counselor Name", field: "counsellor" },
-    { title: "Type of Counselling", field: "Type" },
+    { title: "Type of Counselling", field: "type" },
     { title: "Created on", field: "createdAt" },
     { title: "Status", field: "status" },
   ];
@@ -45,9 +45,9 @@ const CaseSession = () => {
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
         <Typography variant="h4" color={"#4A4647"}>
-          Cases / Case ID
+          Cases / {id}
         </Typography>
-      </Box>{" "}
+      </Box>
       <Box padding="30px" marginBottom={4}>
         <>
           <Stack

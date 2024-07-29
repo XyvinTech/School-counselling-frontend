@@ -42,7 +42,7 @@ export const Counselor = () => {
     { title: "Email", field: "email" },
     { title: "Contact Info", field: "mobile" },
     { title: "Designation", field: "designation" },
-    { title: "Experience Level", field: "location" },
+    // { title: "Experience Level", field: "location" },
     { title: "Status", field: "status" },
   ];
   useEffect(() => {

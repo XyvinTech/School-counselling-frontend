@@ -43,7 +43,8 @@ const UpcomingSession = () => {
     { title: "Status", field: "status" },
   ];
   useEffect(() => {
-    let filter = { type: "sessions" };
+    let filter = { type: "sessions" ,status: "pending"};
+
     counselorSessions(filter);
   }, [counselorSessions]);
   return (

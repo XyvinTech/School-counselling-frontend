@@ -76,7 +76,7 @@ export const addEntry = async (id, data) => {
 export const cancelcounselorSession = async (id) => {
   try {
     const response = await axiosInstance.put(
-      `/counsellor/cancel-session/${id}/cancel`
+      `/counsellor/cancel-session/${id}`
     );
     toast.success(response.data.message);
     return response.data;

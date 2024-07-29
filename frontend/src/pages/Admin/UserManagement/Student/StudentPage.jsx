@@ -28,15 +28,15 @@ const StudentPage = () => {
     navigate(`/user/student/${id}`);
   };
   const userColumns = [
-    { title: "Student ID", field: "StudentID", padding: "none" },
+    { title: "Student ID", field: "id", padding: "none" },
 
     { title: "Student Name", field: "name" },
-    { title: "Class", field: "Class" },
-    { title: "Division", field: "Division" },
+
+    { title: "Designation", field: "designation" },
     { title: "Email Id  ", field: "email" },
     { title: "Contact info", field: "mobile" },
-    { title: "Parent Name", field: "ParentName" },
-    { title: "Parent Contact", field: "ParentContact" },
+    // { title: "Parent Name", field: "ParentName" },
+    { title: "Parent Contact", field: "parentcontact" },
   ];
   useEffect(() => {
     let filter = { type: "students" };

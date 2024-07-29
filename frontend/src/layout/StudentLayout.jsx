@@ -28,25 +28,19 @@ import {
 } from "@mui/material";
 import profile from "../assets/images/profile.png";
 import { ReactComponent as ExpandMoreIcon } from "../assets/icons/ExpandMoreIcon.svg";
-import { ReactComponent as BookingIcon } from "../assets/icons/BookingIcon.svg";
-import { ReactComponent as EventIcon } from "../assets/icons/EventIcon.svg";
-import { ReactComponent as ReportIcon } from "../assets/icons/ReportIcon.svg";
 import { ReactComponent as NotificationIcon } from "../assets/icons/NotificationIcon.svg";
-import { ReactComponent as SettingsIcon } from "../assets/icons/SettingsIcon.svg";
-import { ReactComponent as TeacherIcon } from "../assets/icons/TeacherIcon.svg";
-import { ReactComponent as LogoutIcon } from "../assets/icons/LogoutIcon.svg";
 
-import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
-import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined';
+import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
+import NewspaperOutlinedIcon from "@mui/icons-material/NewspaperOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
 import { useAuthStore } from "../store/student/authStore";
 const drawerWidth = 250;
 const subNavigation = [
   {
-    name: "Book Apponment",
+    name: "Book Appoinment",
     to: "/student/bookappoinment",
     icon: <EventAvailableOutlinedIcon />,
   },
@@ -87,10 +81,10 @@ const SimpleDialog = ({ open, onClose }) => {
           />
           <Box>
             <Typography variant="h6" color="#292D32" paddingBottom={1}>
-            {student?.name}
+              {student?.name}
             </Typography>
             <Typography variant="h7" color="rgba(41, 45, 50, 0.44)">
-            {student?.usertype}
+              {student?.usertype}
             </Typography>
           </Box>
         </Stack>
@@ -104,7 +98,7 @@ const StudentLayout = (props) => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const { student ,logoutAuth} = useAuthStore();
+  const { student, logoutAuth } = useAuthStore();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const location = useLocation();
@@ -136,7 +130,7 @@ const StudentLayout = (props) => {
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
-  console.log('false',student);
+  console.log("false", student);
   const drawer = (
     <div style={{ position: "relative", height: "100%" }}>
       <Toolbar sx={{ height: "88px" }}>
@@ -167,7 +161,14 @@ const StudentLayout = (props) => {
                     "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 24, marginRight: 1 ,color:location.pathname === item.to ? "#0072BC" : "#686465"}}>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 24,
+                      marginRight: 1,
+                      color:
+                        location.pathname === item.to ? "#0072BC" : "#686465",
+                    }}
+                  >
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText
@@ -208,7 +209,16 @@ const StudentLayout = (props) => {
                           "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                         }}
                       >
-                        <ListItemIcon sx={{ minWidth: 24, marginRight: 1,color:location.pathname === item.to ? "#0072BC" : "#686465" }}>
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 24,
+                            marginRight: 1,
+                            color:
+                              location.pathname === item.to
+                                ? "#0072BC"
+                                : "#686465",
+                          }}
+                        >
                           {subItem.icon}
                         </ListItemIcon>
                         <ListItemText
@@ -242,7 +252,14 @@ const StudentLayout = (props) => {
                   "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 24, marginRight: 1 ,color:location.pathname === item.to ? "#0072BC" : "#686465"}}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 24,
+                    marginRight: 1,
+                    color:
+                      location.pathname === item.to ? "#0072BC" : "#686465",
+                  }}
+                >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
@@ -262,11 +279,7 @@ const StudentLayout = (props) => {
         }}
       >
         <Divider />
-        <ListItem
-          sx={{ paddingBottom: "20px" }}
-          disablePadding
-         
-        >
+        <ListItem sx={{ paddingBottom: "20px" }} disablePadding>
           <ListItemButton
             sx={{
               marginLeft: "20px",
@@ -274,7 +287,8 @@ const StudentLayout = (props) => {
               color: "#5F6368",
               "&:hover": { color: "#0072BC", backgroundColor: "#ECF6FC" },
               "&:hover .MuiListItemIcon-root": { color: "#0072BC" },
-            }}onClick={handleLogout}
+            }}
+            onClick={handleLogout}
           >
             <ListItemIcon sx={{ minWidth: 24, marginRight: 1 }}>
               <LogoutOutlinedIcon />
@@ -354,14 +368,14 @@ const StudentLayout = (props) => {
                 />
                 <Box sx={{ marginLeft: "10px" }}>
                   <Typography variant="h6" color={"#292D32"} display="block">
-                  {student?.name}
+                    {student?.name}
                   </Typography>
                   <Typography
                     variant="h7"
                     color={"rgba(41, 45, 50, 0.44)"}
                     display="block"
                   >
-                   {student?.usertype}
+                    {student?.usertype}
                   </Typography>
                 </Box>
               </Box>

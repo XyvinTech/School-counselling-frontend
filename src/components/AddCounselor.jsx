@@ -2,7 +2,6 @@ import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import StyledInput from "../ui/StyledInput";
 import StyledSelectField from "../ui/StyledSelectField";
-import { StyledEventUpload } from "../ui/StyledEventUpload";
 import { StyledMultilineTextField } from "../ui/StyledMultilineTextField ";
 import StyledSwitch from "../ui/StyledSwitch";
 import { StyledButton } from "../ui/StyledButton";

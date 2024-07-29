@@ -8,7 +8,6 @@ import { StyledCalender } from "../ui/StyledCalender";
 import StyledSwitch from "/src/ui/StyledSwitch.jsx";
 import StyledInput from "../ui/StyledInput";
 import { Controller, useForm } from "react-hook-form";
-import { StyledEventUpload } from "../ui/StyledEventUpload";
 import StyledUploadImage from "../ui/StyledUploadImage";
 import { useEventStore } from "../store/eventStore";
 

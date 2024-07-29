@@ -1,10 +1,10 @@
 import { createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 
-const globalStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=STIX+Two+Text&display=swap');
-`;
+// const globalStyles = `
+//   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+//   @import url('https://fonts.googleapis.com/css2?family=STIX+Two+Text&display=swap');
+// `;
 
 const theme = createTheme({
   palette: {},
@@ -46,9 +46,9 @@ const theme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: `
-        ${globalStyles}
-      `,
+      // styleOverrides: `
+      //   ${globalStyles}
+      // `,
     },
   },
 });

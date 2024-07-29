@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   addCounselor,
   allCounselor,
+  editCounsellor,
   fetchCounselor,
   getUser,
 } from "../../api/admin/counselorapi";
@@ -13,6 +14,14 @@ const useCounselorStore = create((set) => ({
   addCounselors: async (data) => {
     const newCounselor = await addCounselor(data);
     set((state) => ({ counselors: [...state.counselors, newCounselor] }));
+  },
+  updateCounsellor: async (id, data) => {
+    const updatedData = await editCounsellor(id, data);
+    set((state) => ({
+      counselors: state.counselors.map((counsellor) =>
+        counsellor.id === id ? updatedData : counsellor
+      ),
+    }));
   },
   fetchUser: async (id) => {
     const session = await getUser(id);

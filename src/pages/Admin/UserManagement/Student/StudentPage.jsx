@@ -9,6 +9,7 @@ import { useListStore } from "../../../../store/listStore";
 const StudentPage = () => {
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState([]);
+  const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const { lists, fetchLists } = useListStore();
   const handleOpenFilter = () => {
@@ -28,22 +29,23 @@ const StudentPage = () => {
     navigate(`/user/student/${id}`);
   };
   const userColumns = [
-    { title: "Student ID", field: "StudentID", padding: "none" },
+    { title: "Student ID", field: "id", padding: "none" },
 
     { title: "Student Name", field: "name" },
-    { title: "Class", field: "Class" },
-    { title: "Division", field: "Division" },
+
+    { title: "Designation", field: "designation" },
     { title: "Email Id  ", field: "email" },
     { title: "Contact info", field: "mobile" },
-    { title: "Parent Name", field: "ParentName" },
-    { title: "Parent Contact", field: "ParentContact" },
+    // { title: "Parent Name", field: "ParentName" },
+    { title: "Parent Contact", field: "parentcontact" },
   ];
   useEffect(() => {
     let filter = { type: "students" };
-
+    if (search) {
+      filter.searchQuery = search;
+    }
     fetchLists(filter);
-  }, [fetchLists]);
-  console.log(lists);
+  }, [fetchLists,search]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -60,7 +62,10 @@ const StudentPage = () => {
             alignItems={"center"}
           >
             <Stack direction={"row"} spacing={2}>
-              <StyledSearchbar />
+              <StyledSearchbar
+                placeholder={"Search Student Name"}
+                onchange={(e) => setSearch(e.target.value)}
+              />
               <Box
                 bgcolor={"#FFFFFF"}
                 borderRadius={"50%"}

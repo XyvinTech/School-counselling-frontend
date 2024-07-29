@@ -9,6 +9,7 @@ import StyledTable from "../ui/StyledTable";
 const StudentCaseTable = () => {
   const navigate = useNavigate();
   const { lists, userSession } = useListStore();
+  const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const handleOpenFilter = () => {
     setFilterOpen(true);
@@ -18,21 +19,23 @@ const StudentCaseTable = () => {
     setFilterOpen(false);
   };
   const handleView = (id) => {
-    console.log("View item:", id);
+    // console.log("View item:", id);
     navigate(`/student/session/case/${id}`);
   };
   const userColumns = [
     { title: "Case ID", field: "id" },
     { title: "Councellor Name", field: "counsellor_name" },
-    { title: "Type of Counselling", field: "type" },
+    { title: "Type of Counselling", field: "session_type" },
     { title: "Created on", field: "createdAt" },
     { title: "Status", field: "status" },
   ];
   useEffect(() => {
     let filter = { type: "cases" };
-
+    if (search) {
+      filter.searchQuery = search;
+    }
     userSession(filter);
-  }, [userSession]);
+  }, [userSession,search]);
   return (
     <>
       <Stack
@@ -46,7 +49,10 @@ const StudentCaseTable = () => {
           Cases
         </Typography>
         <Stack direction={"row"} spacing={2}>
-          <StyledSearchbar />
+        <StyledSearchbar
+            placeholder={"Search Counselor Name"}
+            onchange={(e) => setSearch(e.target.value)}
+          />
           <Box
             bgcolor={"#FFFFFF"}
             borderRadius={"50%"}

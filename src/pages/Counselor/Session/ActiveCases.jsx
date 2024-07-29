@@ -12,7 +12,7 @@ const ActiveCases = () => {
   const { lists, counselorSessions } = useListStore();
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const [search, setSearch] = useState("");
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
@@ -37,13 +37,19 @@ const ActiveCases = () => {
   ];
   useEffect(() => {
     let filter = { type: "cases" };
+    if (search) {
+      filter.searchQuery = search;
+    }
     counselorSessions(filter);
-  }, [counselorSessions]);
+  }, [counselorSessions,search]);
   return (
     <>
       <Stack direction={"row"} justifyContent={"end"}>
         <Stack direction={"row"} spacing={2}>
-          <StyledSearchbar />
+        <StyledSearchbar
+            placeholder={"Search Student Name"}
+            onchange={(e) => setSearch(e.target.value)}
+          />
           <Box
             bgcolor={"#FFFFFF"}
             borderRadius={"50%"}

@@ -14,8 +14,7 @@ const data = {
     email: "Prabfitz@gmail.com",
     img: imag,
   };
-export default function 
-() {
+export default function EventSinglePage () {
     const [selectedTab, setSelectedTab] = useState(0);
     const [selectedRows, setSelectedRows] = useState([]);
 

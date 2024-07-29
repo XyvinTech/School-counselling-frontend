@@ -1,7 +1,14 @@
 import React from "react";
 import { Stack, Typography, Grid, Divider, Box } from "@mui/material";
+import moment from "moment-timezone";
 
 const CaseCard = ({ data }) => {
+  const formatDateTime = (date, time) => {
+    if (!date || !time) return "-";
+    const dateTimeString = `${date} ${time}`;
+    return moment.tz(dateTimeString, "YYYY-MM-DD hh:mm:ss", "Asia/Muscat").format("MMM DD, YYYY hh:mm A");
+  };
+
   return (
     <Stack bgcolor={"white"} borderRadius={"16px"}>
       <Stack direction="row" justifyContent="space-between" padding={2}>
@@ -29,7 +36,7 @@ const CaseCard = ({ data }) => {
           Grade
         </Typography>
         <Typography variant="h6" color={"#23262F"}>
-          {data?.grade}
+          {data?.grade? data.grade : "-"}
         </Typography>
       </Stack>
       <Stack
@@ -42,7 +49,7 @@ const CaseCard = ({ data }) => {
           Appointment Date
         </Typography>
         <Typography variant="h6" color={"#23262F"}>
-          {data?.session_date} {data?.session_time}
+        {formatDateTime(data?.session_date, data?.session_time)}
         </Typography>
       </Stack>
       <Stack direction="row" justifyContent="space-between" padding={2}>
@@ -77,7 +84,7 @@ const CaseCard = ({ data }) => {
         </Typography>
         <Typography variant="h6" color={"#23262F"}>
           {" "}
-          {data?.refer}
+          {data?. refers ? data.refers : "-"}
         </Typography>
       </Stack>
       <Stack
@@ -90,7 +97,7 @@ const CaseCard = ({ data }) => {
           Referee’s Remark
         </Typography>
         <Typography variant="h6" color={"#23262F"} sx={{ width: "50%" }}textAlign={'end'}>
-        {data?.remarks}
+        {data?.remarks ? data.remarks : "-"}
         </Typography>
       </Stack>
       <Stack direction="row" justifyContent="space-between" padding={2}>
@@ -108,10 +115,10 @@ const CaseCard = ({ data }) => {
         bgcolor={"#F0F8FF"}
         padding={2}
       >
-        <Typography variant="h6" color={"#828282"}>
+        {/* <Typography variant="h6" color={"#828282"}>
           Date of next session
         </Typography>
-        <Typography variant="h6" color={"#23262F"}></Typography>
+        <Typography variant="h6" color={"#23262F"}></Typography> */}
       </Stack>
       <Stack direction="row" justifyContent="space-between" padding={2}>
         <Typography variant="h6" color={"#828282"}>

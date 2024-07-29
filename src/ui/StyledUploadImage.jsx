@@ -1,5 +1,5 @@
-import AWS from "aws-sdk";
 import React, { useRef, useState } from "react";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -42,60 +42,52 @@ const ImagePreview = styled(Box)({
   borderRadius: "4px",
 });
 
-const S3_BUCKET = "school-counselling";
-const REGION = "ap-south-1";
-AWS.config.update({
-  accessKeyId:import.meta.env.VITE_ACCESS_KEYID,
-  secretAccessKey: import.meta.env.VITE_SECRET_ACCESSKEY,
-  region: REGION,
-});
-
-const s3 = new AWS.S3({
-  params: { Bucket: S3_BUCKET },
-  region: REGION,
-});
-
-export const StyledEventUpload = ({ label, placeholder, onChange }) => {
+const StyledUploadImage = ({ label, placeholder, onChange }) => {
   const fileInputRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [file, setFile] = useState(null);
 
   const handleIconClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target.result);
-        onChange(e.target.result); // Update form state with image data
+      setFile(file);
+      setSelectedImage(URL.createObjectURL(file));
+      // onChange && onChange(file);
+    }
+  };
 
-        // Upload file to S3
-        const params = {
-          Bucket: S3_BUCKET,
-          Key: file.name,
-          Body: file,
-        };
+  const uploadFile = async () => {
+    const S3_BUCKET = "school-counselling";
+    const REGION = "ap-south-1";
+    const ACCESS_KEY_ID = "AKIAZQ3DOONQI5LA2Y6G";
+    const SECRET_ACCESS_KEY = "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";
 
-        s3.upload(params)
-          .on("httpUploadProgress", (evt) => {
-            console.log(
-              "Uploading " + parseInt((evt.loaded * 100) / evt.total) + "%"
-            );
-          })
-          .send((err, data) => {
-            if (err) {
-              console.error("Error uploading file:", err);
-            } else {
-              console.log("File uploaded successfully:", data);
-              onChange(data.Location);
-              alert("File uploaded successfully.");
-            }
-          });
-      };
-      reader.readAsDataURL(file);
-      console.log("Selected file:", file.name);
+    const s3Client = new S3Client({
+      region: REGION,
+      credentials: {
+        accessKeyId: ACCESS_KEY_ID,
+        secretAccessKey: SECRET_ACCESS_KEY,
+      },
+    });
+
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: file.name,
+      Body: file,
+    };
+
+    try {
+      const command = new PutObjectCommand(params);
+      const data = await s3Client.send(command);
+      // console.log("File uploaded successfully:", data);
+      const location = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
+      onChange(location);
+    } catch (err) {
+      console.error("Error uploading file:", err);
     }
   };
 
@@ -126,6 +118,9 @@ export const StyledEventUpload = ({ label, placeholder, onChange }) => {
       {selectedImage && (
         <ImagePreview style={{ backgroundImage: `url(${selectedImage})` }} />
       )}
+      {file && <button onClick={uploadFile}>Upload</button>}
     </>
   );
 };
+
+export default StyledUploadImage;

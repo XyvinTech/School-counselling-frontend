@@ -34,7 +34,7 @@ const  CounselorCard = ({ user }) => {
           <Stack direction="row" alignItems="center" spacing={1}>
             <PhoneIcon />
             <Typography variant="h6" color={"#2C2829"}>
-              {user?.mobile}
+              {user?.counsellor_mobile}
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>

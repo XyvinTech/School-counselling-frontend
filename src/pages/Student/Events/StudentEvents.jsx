@@ -1,22 +1,37 @@
 import { Box, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import StyledSearchbar from "../../../ui/StyledSearchbar";
 import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.svg";
 import StyledTable from "../../../ui/StyledTable";
-import { userColumns, userData } from "../../../assets/json/StudentMEventData";
+import { useListStore } from "../../../store/listStore";
 
-const handleOpenFilter = () => {
-  setFilterOpen(true);
-};
-const handleSelectionChange = (newSelectedIds) => {
-  setSelectedRows(newSelectedIds);
-  console.log("Selected items:", newSelectedIds);
-};
-const handleView = (id) => {
-  console.log("View item:", id);
-  navigate(`/cases/session/${id}`);
-};
 const StudentEvents = () => {
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const handleOpenFilter = () => {
+    setFilterOpen(true);
+  };
+
+  const handleCloseFilter = () => {
+    setFilterOpen(false);
+  };
+  const { lists, fetchLists } = useListStore();
+  const userColumns = [
+    { title: "Event Date", field: "date", padding: "none" },
+
+    { title: "Time", field: "time" },
+    { title: "Event Name", field: "title" },
+    // { title: "Designation", field: "designation" },
+    // { title: "Experience Level", field: "experience" },
+    // { title: "Status", field: "status" },
+  ];
+  useEffect(() => {
+    let filter = { type: "events" };
+    if (search) {
+      filter.searchQuery = search;
+    }
+    fetchLists(filter);
+  }, [fetchLists, search]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -33,7 +48,10 @@ const StudentEvents = () => {
             alignItems={"center"}
           >
             <Stack direction={"row"} spacing={2}>
-              <StyledSearchbar />
+              <StyledSearchbar
+                placeholder={"Search Event Name"}
+                onchange={(e) => setSearch(e.target.value)}
+              />
               <Box
                 bgcolor={"#FFFFFF"}
                 borderRadius={"50%"}
@@ -50,12 +68,7 @@ const StudentEvents = () => {
               </Box>
             </Stack>
           </Stack>{" "}
-          <StyledTable
-            columns={userColumns}
-            data={userData}
-            onSelectionChange={handleSelectionChange}
-            onView={handleView}
-          />{" "}
+          <StyledTable columns={userColumns} />{" "}
         </>
       </Box>
     </>

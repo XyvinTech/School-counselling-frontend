@@ -76,7 +76,7 @@ export const addEntry = async (id, data) => {
 export const cancelcounselorSession = async (id) => {
   try {
     const response = await axiosInstance.put(
-      `/counsellor/cancel-session/${id}/cancel`
+      `/counsellor/cancel-session/${id}`
     );
     toast.success(response.data.message);
     return response.data;
@@ -84,3 +84,24 @@ export const cancelcounselorSession = async (id) => {
     toast.error(error.response.data.message);
   }
 };
+export const cancelUserSession = async (id) => {
+  try {
+    const response = await axiosInstance.put(
+      `/user/cancel-session/${id}/cancel`
+    );
+    toast.success(response.data.message);
+    return response.data;
+  } catch (error) {
+    toast.error(error.response.data.message);
+  }
+};
+export const getAdminSessionByCase = handleAsync(async (id) => {
+  const response = await axiosInstance.get(`/admin/sessions/${id}/case`);
+
+  return response.data;
+});
+export const getAdminSessionReport = handleAsync(async (id) => {
+  const response = await axiosInstance.get(`/admin/session/${id}`);
+
+  return response.data;
+});

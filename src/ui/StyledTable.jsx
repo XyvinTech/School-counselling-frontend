@@ -15,6 +15,7 @@ import {
   Checkbox,
   Menu,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import { ReactComponent as ViewIcon } from "../assets/icons/ViewIcon.svg";
 import { ReactComponent as LeftIcon } from "../assets/icons/LeftIcon.svg";
@@ -22,7 +23,7 @@ import { ReactComponent as RightIcon } from "../assets/icons/RightIcon.svg";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useListStore } from "../store/listStore";
 import { useNavigate } from "react-router-dom";
-
+import moment from "moment-timezone";
 const StyledTableCell = styled(TableCell)`
   &.${tableCellClasses.head} {
     background-color: #fff;
@@ -52,7 +53,9 @@ const StyledTableRow = styled(TableRow)`
     background-color: ${({ showEdit }) => (showEdit ? "#f0f0f0" : "inherit")};
   }
 `;
-
+const formatDate = (dateString, format = "MMM DD, YYYY ") => {
+  return moment.tz(dateString, "Asia/Muscat").format(format);
+};
 const StyledTable = ({
   columns,
   onSelectionChange,
@@ -65,7 +68,8 @@ const StyledTable = ({
   onReschedule,
   reschedule,
   onEntry,
-  onCancel
+  onCancel,
+ 
 }) => {
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState([]);
@@ -73,7 +77,8 @@ const StyledTable = ({
   const [rowId, setRowId] = useState(null);
   const [rowData, setRowData] = useState(null);
 
-  const { lists } = useListStore();
+  const { lists, totalCount, rowPerSize, rowChange, pageNo, pageInc, pageDec } =
+    useListStore();
 
   const handleSelectAllClick = (event) => {
     const isChecked = event.target.checked;
@@ -173,6 +178,8 @@ const StyledTable = ({
         return "green";
       case "accepted":
         return "green";
+      case "cancelled":
+        return "red";
       case "draft":
         return "#BFBABA";
       default:
@@ -206,104 +213,125 @@ const StyledTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {lists?.map((row) => (
-              <StyledTableRow
-                role="checkbox"
-                key={row.id}
-                selected={isSelected(row.id)}
-              >
-                <StyledTableCell padding="checkbox">
-                  <Checkbox
-                    checked={isSelected(row.id)}
-                    onChange={(event) => handleRowCheckboxChange(event, row.id)}
-                  />
-                </StyledTableCell>
-                {columns.map((column) => (
-                  <StyledTableCell
-                    key={column.field}
-                    padding={column.padding || "normal"}
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => handleRowClick(row.id)}
-                  >
-                    {column.field === "status" ? (
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <span
-                          style={{
-                            backgroundColor: getStatusVariant(
-                              row[column.field]
-                            ),
-                            padding: "3px 8px",
-                            borderRadius: "100px",
-                            color: "#fff",
-                          }}
-                        >
-                          {typeof row[column.field] === "boolean"
-                            ? row[column.field]
-                              ? "active"
-                              : "inactive"
-                            : row[column.field]}
-                        </span>
-                      </Box>
-                    ) : (
-                      row[column.field]
-                    )}
-                  </StyledTableCell>
-                ))}
-
-                <StyledTableCell padding="normal">
-                  <Box display="flex" alignItems="center">
-                    <IconButton
-                      aria-controls="simple-view"
-                      aria-haspopup="true"
-                      onClick={() => handleRowClick(row.id)}
-                    >
-                      <ViewIcon />
-                    </IconButton>
-                    {menu && (
-                      <IconButton
-                        aria-controls="simple-menu"
-                        aria-haspopup="true"
-                        onClick={(event) => handleMenuOpen(event, row)}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    )}
-                    <Menu
-                      id="row-menu"
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl) && rowId === row.id}
-                      onClose={handleMenuClose}
-                    >
-                      {counselor ? (
-                        <>
-                          <MenuItem onClick={handleReschedule}>
-                            Reschedule
-                          </MenuItem>
-                          <MenuItem onClick={handleAddLink}>Add Link</MenuItem>
-                          <MenuItem onClick={handleAddEntry}>
-                            Add Session Entry
-                          </MenuItem>
-                          <MenuItem onClick={handleCancel}>Cancel</MenuItem>
-                        </>
-                      ) : reschedule ? (
-                        <MenuItem onClick={handleReschedule}>
-                          Reschedule
-                        </MenuItem>
-                      ) : (
-                        <>
-                          <MenuItem onClick={handleView}>View</MenuItem>
-                          <MenuItem onClick={handleDelete}>Delete</MenuItem>
-                        </>
-                      )}
-                    </Menu>
-                  </Box>
+            {lists.length === 0 ? (
+              <StyledTableRow>
+                <StyledTableCell colSpan={columns.length + 2}>
+                  <Typography variant="h6" textAlign="center">
+                    No data
+                  </Typography>
                 </StyledTableCell>
               </StyledTableRow>
-            ))}
+            ) : (
+              lists?.map((row) => (
+                <StyledTableRow
+                  role="checkbox"
+                  key={row.id}
+                  selected={isSelected(row.id)}
+                >
+                  <StyledTableCell padding="checkbox">
+                    <Checkbox
+                      checked={isSelected(row.id)}
+                      onChange={(event) =>
+                        handleRowCheckboxChange(event, row.id)
+                      }
+                    />
+                  </StyledTableCell>
+                  {columns.map((column) => (
+                    <StyledTableCell
+                      key={column.field}
+                      padding={column.padding || "normal"}
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => handleRowClick(row.id)}
+                    >
+                      {column.field === "status" ? (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <span
+                            style={{
+                              backgroundColor: getStatusVariant(
+                                row[column.field]
+                              ),
+                              padding: "3px 8px",
+                              borderRadius: "100px",
+                              color: "#fff",
+                            }}
+                          >
+                            {typeof row[column.field] === "boolean"
+                              ? row[column.field]
+                                ? "active"
+                                : "inactive"
+                              : row[column.field]}
+                          </span>
+                        </Box>
+                      ) : ["createdAt", "updatedAt", "date"].includes(
+                          column.field
+                        ) ? (
+                        formatDate(row[column.field])
+                      ) : (
+                        row[column.field]
+                      )}
+                    </StyledTableCell>
+                  ))}
+
+                  <StyledTableCell padding="normal">
+                    <Box display="flex" alignItems="center">
+                      <IconButton
+                        aria-controls="simple-view"
+                        aria-haspopup="true"
+                        onClick={() => handleRowClick(row.id)}
+                      >
+                        <ViewIcon />
+                      </IconButton>
+                      {menu && (
+                        <IconButton
+                          aria-controls="simple-menu"
+                          aria-haspopup="true"
+                          onClick={(event) => handleMenuOpen(event, row)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      )}
+                      <Menu
+                        id="row-menu"
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl) && rowId === row.id}
+                        onClose={handleMenuClose}
+                      >
+                        {counselor ? (
+                          <>
+                            <MenuItem onClick={handleReschedule}>
+                              Reschedule
+                            </MenuItem>
+                            <MenuItem onClick={handleAddLink}>
+                              Add Link
+                            </MenuItem>
+                            <MenuItem onClick={handleAddEntry}>
+                              Add Session Entry
+                            </MenuItem>
+                            <MenuItem onClick={handleCancel}>Cancel</MenuItem>
+                          </>
+                        ) : reschedule ? (
+                          <>
+                            <MenuItem onClick={handleReschedule}>
+                              Reschedule
+                            </MenuItem>
+                            <MenuItem onClick={handleCancel}>Cancel</MenuItem>
+                          </>
+                        ) : (
+                          <>
+                            <MenuItem onClick={handleReschedule}>Activate</MenuItem>
+                            {/* <MenuItem onClick={handleDelete}>Delete</MenuItem> */}
+                          </>
+                        )}
+                      </Menu>
+                    </Box>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+            )}
           </TableBody>
         </Table>
         <Divider />
@@ -327,6 +355,12 @@ const StyledTable = ({
               <Box display="flex" alignItems="center">
                 <TablePagination
                   component="div"
+                  rowsPerPage={rowPerSize}
+                  labelDisplayedRows={({ from, to }) =>
+                    `${pageNo}-${Math.ceil(
+                      totalCount / rowPerSize
+                    )} of ${totalCount}`
+                  }
                   ActionsComponent={({ onPageChange }) => (
                     <Stack
                       direction="row"
@@ -334,8 +368,32 @@ const StyledTable = ({
                       alignItems="center"
                       marginLeft={2}
                     >
-                      <LeftIcon />
-                      <RightIcon />
+                      {" "}
+                      <Box
+                        onClick={pageDec}
+                        sx={{
+                          cursor: pageNo > 1 ? "pointer" : "not-allowed",
+                          opacity: pageNo > 1 ? 1 : 0.5,
+                        }}
+                      >
+                        <LeftIcon />{" "}
+                      </Box>
+                      <Box
+                        onClick={pageInc}
+                        sx={{
+                          cursor:
+                            pageNo < Math.ceil(totalCount / rowPerSize)
+                              ? "pointer"
+                              : "not-allowed",
+                          opacity:
+                            pageNo < Math.ceil(totalCount / rowPerSize)
+                              ? 1
+                              : 0.5,
+                        }}
+                      >
+                        {" "}
+                        <RightIcon />{" "}
+                      </Box>
                     </Stack>
                   )}
                 />

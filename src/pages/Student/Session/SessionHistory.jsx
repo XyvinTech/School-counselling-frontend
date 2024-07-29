@@ -6,17 +6,32 @@ import { ReactComponent as FilterIcon } from "../../../assets/icons/FilterIcon.s
 import StyledTable from "../../../ui/StyledTable";
 import { useListStore } from "../../../store/listStore";
 import { useNavigate } from "react-router-dom";
+import CancelUserSession from "../../../components/CancelSession";
 const SessionHistory = () => {
   const navigate = useNavigate();
   const { lists, userSession } = useListStore();
   const [selectedTab, setSelectedTab] = useState("all");
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState(null);
+  const [isChange, setIsChange] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
+  const handleCancel = (rowData) => {
+    setSelectedRowId(rowData.id);
 
+    setCancelOpen(true);
+    // setIsChange(!isChange);
+  };
+  const handleCloseCancel = () => {
+    setCancelOpen(false);
+    setSelectedRowId(null);
+    setIsChange(!isChange);
+  };
   const handleCloseFilter = () => {
     setFilterOpen(false);
   };
@@ -29,12 +44,11 @@ const SessionHistory = () => {
     console.log("Selected items:", newSelectedIds);
   };
 
-  const handleView = (id) => {
-    console.log("View item:", id);
-  };
   const handleReschedule = (rowData) => {
     // console.log("View item:", id);
-    navigate(`/student/session/reschedule/${rowData.id}`, { state: { rowData } });
+    navigate(`/student/session/reschedule/${rowData.id}`, {
+      state: { rowData },
+    });
   };
 
   const userColumns = [
@@ -47,41 +61,40 @@ const SessionHistory = () => {
   ];
   useEffect(() => {
     let filter = { type: "sessions" };
-
+    if (search) {
+      filter.searchQuery = search;
+    }
+    if (status) {
+      filter.status = status;
+    }
     userSession(filter);
-  }, [userSession]);
+  }, [isChange, userSession,search,status]);
   // console.log(lists);
   return (
     <>
-      <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
-        //  padding={2}
-      >
-        <Stack direction={"row"} spacing={2}>
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <Stack direction={"row"} spacing={2} width={"40%"}>
           <StyledButton
             name="All Sessions"
-            variant={selectedTab === "all" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("all")}
+            variant={status === null ? "primary" : "secondary"}
+            onClick={() => setStatus(null)}
           />
           <StyledButton
             name="Completed"
-            variant={selectedTab === "completed" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("completed")}
+            variant={status === "completed" ? "primary" : "secondary"}
+            onClick={() => setStatus("completed")}
           />
           <StyledButton
             name="Cancelled"
-            variant={selectedTab === "cancel" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("cancel")}
-          />
-          <StyledButton
-            name="Rescheduled"
-            variant={selectedTab === "reshedule" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("reschedule")}
+            variant={status === "cancelled" ? "primary" : "secondary"}
+            onClick={() => setStatus("cancelled")}
           />
         </Stack>{" "}
         <Stack direction={"row"} spacing={2}>
-          <StyledSearchbar />
+        <StyledSearchbar
+            placeholder={"Search Counselor Name"}
+            onchange={(e) => setSearch(e.target.value)}
+          />
           <Box
             bgcolor={"#FFFFFF"}
             borderRadius={"50%"}
@@ -102,10 +115,15 @@ const SessionHistory = () => {
         <StyledTable
           columns={userColumns}
           onSelectionChange={handleSelectionChange}
-          onView={handleView}
+          onCancel={handleCancel}
           menu
           reschedule
           onReschedule={handleReschedule}
+        />{" "}
+        <CancelUserSession
+          open={cancelOpen}
+          onClose={handleCloseCancel}
+          rowId={selectedRowId}
         />
       </Box>
     </>

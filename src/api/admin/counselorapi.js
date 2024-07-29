@@ -11,6 +11,15 @@ export const addCounselor = async (data) => {
     toast.error(error.response.data.message);
   }
 };
+export const editCounsellor = async (id,data) => {
+  try {
+    const response = await axiosInstance.put(`/admin/counsellor/${id}`,data);
+    toast.success(response.data.message);
+    return response.data;
+  } catch (error) {
+    toast.error(error.response.data.message);
+  }
+};
 export const getUser = handleAsync(async (id) => {
   const response = await axiosInstance.get(`/admin/user/${id}`);
 

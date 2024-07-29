@@ -7,18 +7,32 @@ import { ReactComponent as FilterIcon } from "../../../../assets/icons/FilterIco
 import StyledSearchbar from "../../../../ui/StyledSearchbar";
 import AddBulk from "../../../../components/AddBulk";
 import { useListStore } from "../../../../store/listStore";
+import ActivateCounsellor from "../../../../components/ActivateCounsellor";
 export const Counselor = () => {
   const navigate = useNavigate();
   const { lists, fetchLists } = useListStore();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [search, setSearch] = useState("");
   const [isChange, setIsChange] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
-
+  const [activateOpen, setActivateOpen] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
   const handleOpenFilter = () => {
     setFilterOpen(true);
   };
   const handleIsChange = () => {
+    setIsChange(!isChange);
+  };
+  const handleActivate = (rowData) => {
+    setSelectedRowId(rowData);
+
+    setActivateOpen(true);
+    // setIsChange(!isChange);
+  };
+  const handleCloseActivate = () => {
+    setActivateOpen(false);
+    setSelectedRowId(null);
     setIsChange(!isChange);
   };
   const handleCloseFilter = () => {
@@ -42,14 +56,16 @@ export const Counselor = () => {
     { title: "Email", field: "email" },
     { title: "Contact Info", field: "mobile" },
     { title: "Designation", field: "designation" },
-    { title: "Experience Level", field: "location" },
+    // { title: "Experience Level", field: "location" },
     { title: "Status", field: "status" },
   ];
   useEffect(() => {
     let filter = { type: "counsellers" };
-
+    if (search) {
+      filter.searchQuery = search;
+    }
     fetchLists(filter);
-  }, [isChange, fetchLists]);
+  }, [isChange, fetchLists, search]);
   return (
     <>
       <Tabs
@@ -94,7 +110,10 @@ export const Counselor = () => {
               alignItems={"center"}
             >
               <Stack direction={"row"} spacing={2}>
-                <StyledSearchbar />
+                <StyledSearchbar
+                  placeholder={"Search Counselor Name"}
+                  onchange={(e) => setSearch(e.target.value)}
+                />
                 <Box
                   bgcolor={"#FFFFFF"}
                   borderRadius={"50%"}
@@ -115,7 +134,14 @@ export const Counselor = () => {
               columns={userColumns}
               onSelectionChange={handleSelectionChange}
               onView={handleView}
+              menu
+              onReschedule={handleActivate}
             />{" "}
+            <ActivateCounsellor
+              open={activateOpen}
+              onClose={handleCloseActivate}
+              rowData={selectedRowId}
+            />
           </>
         )}
         {selectedTab === 1 && <AddCounselor onChange={handleIsChange} />}

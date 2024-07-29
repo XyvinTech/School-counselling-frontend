@@ -36,7 +36,7 @@ const  StudentCard = ({ user }) => {
           <Stack direction="row" alignItems="center" spacing={1}>
             <PhoneIcon />
             <Typography variant="h6" color={"#2C2829"}>
-              {user?.mobile}
+              {user?.user_mobile}
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>

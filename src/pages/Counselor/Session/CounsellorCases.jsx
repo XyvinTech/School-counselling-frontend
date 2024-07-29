@@ -12,9 +12,10 @@ import CancelSession from "../../../components/CancelSession";
 
 const CounsellorCases = () => {
   const navigate = useNavigate();
-  const { lists, counselorSessions } = useListStore();
+  const { counselorSessions } = useListStore();
   const [selectedTab, setSelectedTab] = useState("all");
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [addLinkOpen, setAddLinkOpen] = useState(false);
   const [isChange, setIsChange] = useState(false);
@@ -31,11 +32,6 @@ const CounsellorCases = () => {
   };
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
-  };
-
-  const handleSelectionChange = (newSelectedIds) => {
-    setSelectedRows(newSelectedIds);
-    console.log("Selected items:", newSelectedIds);
   };
 
   const handleView = (id) => {
@@ -63,7 +59,7 @@ const CounsellorCases = () => {
     setSelectedRowId(rowData.id);
 
     setCancelOpen(true);
-    setIsChange(!isChange);
+    // setIsChange(!isChange);
   };
   const handleCloseReschedule = () => {
     setRescheduleOpen(false);
@@ -93,36 +89,40 @@ const CounsellorCases = () => {
 
   useEffect(() => {
     let filter = { type: "sessions" };
+    if (search) {
+      filter.searchQuery = search;
+    }
+    if (status) {
+      filter.status = status;
+    }
     counselorSessions(filter);
-  }, [isChange, counselorSessions]);
+  }, [isChange, counselorSessions, search, status]);
 
   return (
     <>
       <Stack direction={"row"} justifyContent={"space-between"}>
-        <Stack direction={"row"} spacing={2} width={"50%"}>
+        <Stack direction={"row"} spacing={2} width={"40%"}>
           <StyledButton
             name="All Sessions"
-            variant={selectedTab === "all" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("all")}
+            variant={status === null ? "primary" : "secondary"}
+            onClick={() => setStatus(null)}
           />
           <StyledButton
             name="Completed"
-            variant={selectedTab === "completed" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("completed")}
+            variant={status === "completed" ? "primary" : "secondary"}
+            onClick={() => setStatus("completed")}
           />
           <StyledButton
             name="Cancelled"
-            variant={selectedTab === "cancel" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("cancel")}
-          />
-          <StyledButton
-            name="Rescheduled"
-            variant={selectedTab === "reschedule" ? "primary" : "secondary"}
-            onClick={() => handleTabChange("reschedule")}
+            variant={status === "cancelled" ? "primary" : "secondary"}
+            onClick={() => setStatus("cancelled")}
           />
         </Stack>
         <Stack direction={"row"} spacing={2}>
-          <StyledSearchbar />
+          <StyledSearchbar
+            placeholder={"Search Student Name"}
+            onchange={(e) => setSearch(e.target.value)}
+          />
           <Box
             bgcolor={"#FFFFFF"}
             borderRadius={"50%"}
@@ -142,7 +142,6 @@ const CounsellorCases = () => {
       <Box padding="30px" marginBottom={4}>
         <StyledTable
           columns={userColumns}
-          onSelectionChange={handleSelectionChange}
           onView={handleView}
           menu
           counselor

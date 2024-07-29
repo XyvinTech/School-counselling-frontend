@@ -1,9 +1,14 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import React from "react";
-import UserCard from "../../../ui/UserCard";
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import StudentCard from "../../../ui/StudentCard";
 import imag from "../../../assets/images/staff.png";
 import CaseCard from "../../../ui/CaseCard";
+import { useSessionStore } from "../../../store/counselor/SessionStore";
+import CounselorCard from "../../../ui/CounselorCard";
 const SessionSinglePage = () => {
+  const { id } = useParams();
+  const { sessions,  adminSessionReport} = useSessionStore();
   const data = {
     id: 'STD920282',
     name: "John Doe",
@@ -20,7 +25,11 @@ const SessionSinglePage = () => {
     email: "Prabfitz@gmail.com",
     img: imag,
   };
-
+  useEffect(() => {
+    if (id) {
+      adminSessionReport(id);
+    }
+  }, [id,  adminSessionReport]);
   return (
     <>
       <Box padding={"30px"} bgcolor={"#FFFFFF"}>
@@ -34,16 +43,16 @@ const SessionSinglePage = () => {
             <Typography variant="h6" fontWeight="900" color={"#828282"}>
               Student
             </Typography></Box>
-            <UserCard user={data} />{" "}
+            <StudentCard user={sessions} />{" "}
             <Box marginBottom={4} marginTop={4}>
             <Typography variant="h6" fontWeight="900" color={"#828282"}>
               Counselor
             </Typography></Box>
-            <UserCard user={counselorData} />
+            <CounselorCard  user={sessions} />
           </Stack>
         </Grid>
         <Grid item md={6}>
-          <CaseCard />
+          <CaseCard data={sessions} />
         </Grid>
         <Grid item md={4}>
          

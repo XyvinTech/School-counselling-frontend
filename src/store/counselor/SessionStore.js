@@ -4,7 +4,9 @@ import {
   addEntry,
   addSession,
   cancelcounselorSession,
+  cancelUserSession,
   counselorReschedule,
+  getAdminSessionReport,
   getCounselorSessionReport,
   getSessionReport,
   reschedule,
@@ -62,6 +64,19 @@ const useSessionStore = create((set) => ({
         session.id === id ? updatedData : session
       ),
     }));
+  },
+  cancelSessionByUser: async (id) => {
+    const updatedData = await cancelUserSession(id);
+    set((state) => ({
+      sessions: state.sessions.map((session) =>
+        session.id === id ? updatedData : session
+      ),
+    }));
+  },
+
+  adminSessionReport: async (id) => {
+    const report = await getAdminSessionReport(id);
+    set({ sessions: report.data });
   },
 }));
 

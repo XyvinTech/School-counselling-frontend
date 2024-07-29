@@ -59,7 +59,7 @@ const CounsellorCases = () => {
     setSelectedRowId(rowData.id);
 
     setCancelOpen(true);
-    setIsChange(!isChange);
+    // setIsChange(!isChange);
   };
   const handleCloseReschedule = () => {
     setRescheduleOpen(false);

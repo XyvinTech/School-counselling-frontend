@@ -69,6 +69,7 @@ const StyledTable = ({
   reschedule,
   onEntry,
   onCancel,
+ 
 }) => {
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState([]);
@@ -321,8 +322,8 @@ const StyledTable = ({
                           </>
                         ) : (
                           <>
-                            <MenuItem onClick={handleView}>View</MenuItem>
-                            <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                            <MenuItem onClick={handleReschedule}>Activate</MenuItem>
+                            {/* <MenuItem onClick={handleDelete}>Delete</MenuItem> */}
                           </>
                         )}
                       </Menu>

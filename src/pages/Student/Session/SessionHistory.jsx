@@ -25,7 +25,7 @@ const SessionHistory = () => {
     setSelectedRowId(rowData.id);
 
     setCancelOpen(true);
-    setIsChange(!isChange);
+    // setIsChange(!isChange);
   };
   const handleCloseCancel = () => {
     setCancelOpen(false);

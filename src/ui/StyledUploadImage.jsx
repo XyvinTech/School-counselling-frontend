@@ -1,6 +1,5 @@
-
 import React, { useRef, useState } from "react";
-import AWS from "aws-sdk";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -57,23 +56,22 @@ const StyledUploadImage = ({ label, placeholder, onChange }) => {
     if (file) {
       setFile(file);
       setSelectedImage(URL.createObjectURL(file));
-    //   onChange && onChange(file);
+      // onChange && onChange(file);
     }
   };
 
   const uploadFile = async () => {
     const S3_BUCKET = "school-counselling";
     const REGION = "ap-south-1";
+    const ACCESS_KEY_ID = "AKIAZQ3DOONQI5LA2Y6G";
+    const SECRET_ACCESS_KEY = "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";
 
-    AWS.config.update({
-      accessKeyId: "AKIAZQ3DOONQI5LA2Y6G",
-      secretAccessKey: "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",
+    const s3Client = new S3Client({
       region: REGION,
-    });
-
-    const s3 = new AWS.S3({
-      params: { Bucket: S3_BUCKET },
-      region: REGION,
+      credentials: {
+        accessKeyId: ACCESS_KEY_ID,
+        secretAccessKey: SECRET_ACCESS_KEY,
+      },
     });
 
     const params = {
@@ -83,9 +81,11 @@ const StyledUploadImage = ({ label, placeholder, onChange }) => {
     };
 
     try {
-      const data = await s3.upload(params).promise();
-    //   console.log("File uploaded successfully:", data.Location);
-      onChange(data.Location);
+      const command = new PutObjectCommand(params);
+      const data = await s3Client.send(command);
+      // console.log("File uploaded successfully:", data);
+      const location = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${file.name}`;
+      onChange(location);
     } catch (err) {
       console.error("Error uploading file:", err);
     }

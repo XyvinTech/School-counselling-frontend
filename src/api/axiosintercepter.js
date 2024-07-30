@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://52.66.173.34:3000/api/v1/",
+  baseURL: "https://api-counselling.xpensea.com/api/v1/",
 });
 axiosInstance.interceptors.request.use(
   (config) => {

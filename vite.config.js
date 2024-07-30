@@ -3,22 +3,8 @@ import react from '@vitejs/plugin-react-swc';
 import svgr from '@svgr/rollup';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    svgr(), 
-  ],
-  define: {
-    global: {}, 
+  plugins: [react(), svgr(),],
+  build: {
+    outDir: 'dist',
   },
-  server: {
-    port: 3000,
-},
-build: {
-  outDir: 'dist',
-},
-resolve: {
-    alias: {
-        './runtimeConfig': './runtimeConfig.browser',
-    },
-},
 });

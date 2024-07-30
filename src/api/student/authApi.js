@@ -3,7 +3,7 @@ import axios from "axios";
 import axiosInstance from "../axiosintercepter";
 import { toast } from "react-toastify";
 
-const baseURL = "http://52.66.173.34:3000/api/v1/";
+const baseURL = "https://api-counselling.xpensea.com/api/v1/";
 export const getLogin = async (datas) => {
   try {
     const response = await axios.post(`${baseURL}user/login`, datas);
